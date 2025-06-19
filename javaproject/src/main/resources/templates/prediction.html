@@ -6,27 +6,49 @@
 <body>
 <h2>需要予測画面</h2>
 
-<form th:action="@{/prediction/run}" method="post">
-    <label>予測日：</label>
-    <input type="date" name="date" required>
-    <button type="submit">予測する</button>
-</form>
+<!-- 日付入力 -->
+<label>予測日：</label>
+<input type="date" id="prediction-date">
+<button onclick="runPrediction()">予測する</button>
 
-<hr>
+<hr/>
 
-<h3>今日の予測結果</h3>
-<table border="1">
-    <tr>
-        <th>予測日</th>
-        <th>商品名</th>
-        <th>予測数量</th>
-    </tr>
-    <tr th:each="p : ${predictions}">
-        <td th:text="${p.predictionDate}">日付</td>
-        <td th:text="${p.product.name}">商品</td>
-        <td th:text="${p.predictedQuantity}">数量</td>
-    </tr>
-</table>
+<!-- 結果表示 -->
+<h3>結果：</h3>
+<pre id="result"></pre>
+
+<script>
+function runPrediction() {
+    const date = document.getElementById('prediction-date').value;
+
+    if (!date) {
+        alert("日付を選択してください！");
+        return;
+    }
+
+    // ここで fetch 送信！
+    fetch('/api/prediction/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date: date })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("エラーが発生しました: " + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+        // 結果を画面に表示
+        document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+    })
+    .catch(error => {
+        console.error(error);
+        document.getElementById('result').innerText = "エラー: " + error.message;
+    });
+}
+</script>
 
 </body>
 </html>

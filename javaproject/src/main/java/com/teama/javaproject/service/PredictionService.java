@@ -15,11 +15,6 @@ public class PredictionService {
     @Autowired
     private ProductRepository productRepo;
 
-    @Autowired
-    private DailyBeerSalesRepository salesRepo;
-
-    @Autowired
-    private WeatherHistoryRepository weatherRepo;
 
     @Autowired
     private PredictionRepository predictionRepo;
