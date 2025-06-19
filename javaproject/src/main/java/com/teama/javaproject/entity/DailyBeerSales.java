@@ -1,4 +1,4 @@
-package com.teama.javaproject.entity;
+
 
 
 // import javax.persistence.*;
@@ -137,4 +137,5 @@ public class DailyBeerSales {
                 '}';
     }
 }
+
 
