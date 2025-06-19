@@ -49,92 +49,62 @@
                     本日の予想売上総額: ¥0
                 </div>
                 
-                <div class="button-group">
-                    <button type="submit" class="btn-register">✅ 一括登録</button>
-                    <button type="button" class="btn-reset" onclick="resetForm()">🔄 リセット</button>
-                </div>
+                <button type="submit" class="submit-button">売上データを登録</button>
             </form>
         </div>
         
-        <!-- 売上データ一覧 -->
-        <div class="sales-list">
-            <h2>📋 登録済み売上データ</h2>
-            <table id="salesTable">
-                <thead>
-                    <tr>
-                        <th>販売日付</th>
-                        <th th:each="product : ${products}" th:text="${product.name} + ' ¥' + ${#numbers.formatInteger(product.price, 0, 'COMMA')}"></th>
-                        <th>合計本数</th>
-                        <th>合計売上</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="dateEntry : ${salesByDate}">
-                        <td th:text="${dateEntry.key}"></td>
-                        <td th:each="product : ${products}">
-                            <span th:with="quantity=${#lists.isEmpty(dateEntry.value) ? 0 : #aggregates.sum(dateEntry.value.![product.id == __${product.id}__ ? quantity : 0])}"
-                                  th:text="${quantity} + '本'"></span>
-                        </td>
-                        <td>
-                            <strong th:with="totalQty=${#aggregates.sum(dateEntry.value.![quantity])}"
-                                    th:text="${totalQty} + '本'"></strong>
-                        </td>
-                        <td>
-                            <strong th:with="totalRev=${#aggregates.sum(dateEntry.value.![totalAmount])}"
-                                    th:text="'¥' + ${#numbers.formatInteger(totalRev, 0, 'COMMA')}"></strong>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- 売上データ表示 -->
+        <div class="sales-history" th:if="${!salesRecords.empty}">
+            <h3>📊 売上データ履歴</h3>
+            <div class="sales-table-container">
+                <table class="sales-table">
+                    <thead>
+                        <tr>
+                            <th>日付</th>
+                            <th>商品名</th>
+                            <th>販売数</th>
+                            <th>売上額</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="record : ${salesRecords}">
+                            <td th:text="${#temporals.format(record.salesDate, 'yyyy/MM/dd')}"></td>
+                            <td th:text="${record.product.name}"></td>
+                            <td th:text="${record.quantity} + '本'"></td>
+                            <td th:text="'¥' + ${#numbers.formatInteger(record.totalAmount, 0, 'COMMA')}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     
     <script th:inline="javascript">
-        // 商品データをJavaScriptに渡す
-        const products = /*[[${products}]]*/ [];
-        
-        // リアルタイム売上計算
-        document.querySelectorAll('.quantity-input').forEach(input => {
-            input.addEventListener('input', updateTotalRevenue);
-            input.addEventListener('change', function() {
-                updateProductRevenue(this);
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.quantity-input');
+            
+            inputs.forEach(input => {
+                input.addEventListener('input', updateRevenue);
             });
+            
+            function updateRevenue() {
+                let totalRevenue = 0;
+                
+                inputs.forEach(input => {
+                    const price = parseInt(input.dataset.price);
+                    const quantity = parseInt(input.value) || 0;
+                    const revenue = price * quantity;
+                    
+                    const revenueElement = document.getElementById('revenue_' + input.id);
+                    revenueElement.textContent = '売上額: ¥' + revenue.toLocaleString();
+                    
+                    totalRevenue += revenue;
+                });
+                
+                document.getElementById('totalRevenuePreview').textContent =
+                    '本日の予想売上総額: ¥' + totalRevenue.toLocaleString();
+            }
         });
-        
-        function updateProductRevenue(input) {
-            const price = parseInt(input.dataset.price);
-            const quantity = parseInt(input.value) || 0;
-            const revenue = price * quantity;
-            const productId = input.id.replace('product_', '');
-            
-            document.getElementById('revenue_' + productId).textContent = 
-                '売上額: ¥' + revenue.toLocaleString();
-        }
-        
-        function updateTotalRevenue() {
-            let totalRevenue = 0;
-            document.querySelectorAll('.quantity-input').forEach(input => {
-                const price = parseInt(input.dataset.price);
-                const quantity = parseInt(input.value) || 0;
-                totalRevenue += price * quantity;
-                updateProductRevenue(input);
-            });
-            
-            document.getElementById('totalRevenuePreview').textContent = 
-                '本日の予想売上総額: ¥' + totalRevenue.toLocaleString();
-        }
-        
-        function resetForm() {
-            document.querySelectorAll('.quantity-input').forEach(input => {
-                input.value = 0;
-                updateProductRevenue(input);
-            });
-            document.getElementById('salesDate').value = /*[[${defaultDate}]]*/ '';
-            updateTotalRevenue();
-        }
-        
-        // 初期化
-        updateTotalRevenue();
     </script>
 </body>
 </html>

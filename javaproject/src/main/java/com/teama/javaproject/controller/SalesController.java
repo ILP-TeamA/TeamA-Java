@@ -51,65 +51,26 @@ public class SalesController {
         
         try {
             LocalDate salesDate = LocalDate.parse(salesDateStr);
-            
-            // 未来の日付チェック
-            if (salesDate.isAfter(LocalDate.now())) {
-                redirectAttributes.addFlashAttribute("errorMessage", "未来の日付は登録できません。");
-                return "redirect:/sales";
-            }
-            
-            // 商品別売上データを抽出
             Map<Long, Integer> productSales = new HashMap<>();
-            int totalQuantity = 0;
             
-            for (Map.Entry<String, String> entry : allParams.entrySet()) {
-                String key = entry.getKey();
+            allParams.forEach((key, value) -> {
                 if (key.startsWith("product_")) {
-                    Long productId = Long.valueOf(key.substring(8)); // "product_"を除去
-                    String quantityStr = entry.getValue();
-                    if (quantityStr != null && !quantityStr.trim().isEmpty()) {
-                        Integer quantity = Integer.valueOf(quantityStr);
+                    Long productId = Long.parseLong(key.substring(8));
+                    Integer quantity = Integer.parseInt(value);
+                    if (quantity > 0) {
                         productSales.put(productId, quantity);
-                        totalQuantity += quantity;
                     }
                 }
-            }
-            
-            // 最低1本の売上が必要
-            if (totalQuantity == 0) {
-                redirectAttributes.addFlashAttribute("errorMessage", "少なくとも1つの商品の売上本数を入力してください。");
-                return "redirect:/sales";
-            }
+            });
             
             // サービス経由で登録
             salesService.registerSalesData(salesDate, productSales);
+            redirectAttributes.addFlashAttribute("successMessage", "売上データを登録しました");
             
-            // 合計金額計算
-            int totalRevenue = calculateTotalRevenue(productSales);
-            
-            redirectAttributes.addFlashAttribute("successMessage",
-                String.format("売上データを正常に登録しました！（合計%d本・¥%,d）", totalQuantity, totalRevenue));
-            
-        } catch (NumberFormatException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "数値の形式が正しくありません。");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "エラーが発生しました: " + e.getMessage());
         }
         
         return "redirect:/sales";
-    }
-    
-    private int calculateTotalRevenue(Map<Long, Integer> productSales) {
-        int total = 0;
-        List<Product> products = salesService.getAllProducts();
-        
-        for (Product product : products) {
-            Integer quantity = productSales.get(product.getId());
-            if (quantity != null && quantity > 0) {
-                total += product.getPrice() * quantity;
-            }
-        }
-        
-        return total;
     }
 }

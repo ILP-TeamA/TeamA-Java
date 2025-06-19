@@ -1,30 +1,24 @@
-// // package com.teama.javaproject.entity;
+package com.teama.javaproject.entity;
 
-// <<<<<<< HEAD
-// // public class WeatherHistory {
-    
-// // }
-// =======
-// import jakarta.persistence.*;
-// import lombok.Data;
-// import java.time.LocalDate;
 
-// @Entity
-// @Table(name = "weather_history")
-// @Data
-// public class WeatherHistory {
+import jakarta.persistence.*;
+import lombok.Data;
+import java.time.LocalDate;
 
-//     @Id
-//     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//     private Long id;
+@Entity
+@Table(name = "weather_history")
+@Data
+public class WeatherHistory {
 
-//     private LocalDate date;
-//     private Float avgTemperature;
-//     private Float maxTemperature;
-//     private Float minTemperature;
-//     private Float totalRainfall;
-//     private Float sunshineHours;
-//     private Float avgHumidity;
-// }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-// >>>>>>> origin/main
+    private LocalDate date;
+    private Float avgTemperature;
+    private Float maxTemperature;
+    private Float minTemperature;
+    private Float totalRainfall;
+    private Float sunshineHours;
+    private Float avgHumidity;
+}

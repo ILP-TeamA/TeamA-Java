@@ -1,10 +1,5 @@
-// package com.teama.javaproject.service;
+package com.teama.javaproject.service;
 
-<<<<<<< HEAD
-// public class PredictionService {
-    
-// }
-=======
 import com.teama.javaproject.entity.*;
 import com.teama.javaproject.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,4 +51,4 @@ public class PredictionService {
         return predictionRepo.findByPredictionDate(today);
     }
 }
->>>>>>> origin/main
+
