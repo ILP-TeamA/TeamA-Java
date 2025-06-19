@@ -1,5 +1,6 @@
 package com.teama.javaproject.entity;
 
+
 // import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -136,3 +137,4 @@ public class DailyBeerSales {
                 '}';
     }
 }
+
