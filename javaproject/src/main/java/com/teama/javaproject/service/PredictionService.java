@@ -1,5 +1,5 @@
-package com.teama.javaproject.service;
+// package com.teama.javaproject.service;
 
-public class PredictionService {
+// public class PredictionService {
     
-}
+// }

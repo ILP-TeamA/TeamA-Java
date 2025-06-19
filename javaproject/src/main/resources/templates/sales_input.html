@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>クラフトビール売上入力システム</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>🍺 クラフトビール売上入力システム</h1>
+        
+        <!-- メッセージ表示 -->
+        <div th:if="${successMessage}" class="success-message" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
+        
+        <!-- 入力フォーム -->
+        <div class="input-form">
+            <h3>📅 売上データ入力</h3>
+            <form th:action="@{/sales/register}" method="post" id="salesForm">
+                <div class="date-group">
+                    <label for="salesDate">販売日付:</label>
+                    <input type="date" id="salesDate" name="salesDate" th:value="${defaultDate}" required>
+                </div>
+                
+                <div class="products-grid" id="productsGrid">
+                    <div class="product-card" th:each="product : ${products}">
+                        <div class="product-header">
+                            <span class="product-name" th:text="${product.name}"></span>
+                            <span class="product-price" th:text="'¥' + ${#numbers.formatInteger(product.price, 0, 'COMMA')}"></span>
+                        </div>
+                        <div class="input-group">
+                            <label th:for="'product_' + ${product.id}">売上本数:</label>
+                            <input type="number"
+                                   th:id="'product_' + ${product.id}"
+                                   th:name="'product_' + ${product.id}"
+                                   th:data-price="${product.price}"
+                                   min="0" max="999" value="0" required
+                                   class="quantity-input">
+                            <span class="unit">本</span>
+                        </div>
+                        <div class="product-revenue" th:id="'revenue_' + ${product.id}">
+                            売上額: ¥0
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="total-revenue-preview" id="totalRevenuePreview">
+                    本日の予想売上総額: ¥0
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" class="btn-register">✅ 一括登録</button>
+                    <button type="button" class="btn-reset" onclick="resetForm()">🔄 リセット</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- 売上データ一覧 -->
+        <div class="sales-list">
+            <h2>📋 登録済み売上データ</h2>
+            <table id="salesTable">
+                <thead>
+                    <tr>
+                        <th>販売日付</th>
+                        <th th:each="product : ${products}" th:text="${product.name} + ' ¥' + ${#numbers.formatInteger(product.price, 0, 'COMMA')}"></th>
+                        <th>合計本数</th>
+                        <th>合計売上</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="dateEntry : ${salesByDate}">
+                        <td th:text="${dateEntry.key}"></td>
+                        <td th:each="product : ${products}">
+                            <span th:with="quantity=${#lists.isEmpty(dateEntry.value) ? 0 : #aggregates.sum(dateEntry.value.![product.id == __${product.id}__ ? quantity : 0])}"
+                                  th:text="${quantity} + '本'"></span>
+                        </td>
+                        <td>
+                            <strong th:with="totalQty=${#aggregates.sum(dateEntry.value.![quantity])}"
+                                    th:text="${totalQty} + '本'"></strong>
+                        </td>
+                        <td>
+                            <strong th:with="totalRev=${#aggregates.sum(dateEntry.value.![totalAmount])}"
+                                    th:text="'¥' + ${#numbers.formatInteger(totalRev, 0, 'COMMA')}"></strong>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script th:inline="javascript">
+        // 商品データをJavaScriptに渡す
+        const products = /*[[${products}]]*/ [];
+        
+        // リアルタイム売上計算
+        document.querySelectorAll('.quantity-input').forEach(input => {
+            input.addEventListener('input', updateTotalRevenue);
+            input.addEventListener('change', function() {
+                updateProductRevenue(this);
+            });
+        });
+        
+        function updateProductRevenue(input) {
+            const price = parseInt(input.dataset.price);
+            const quantity = parseInt(input.value) || 0;
+            const revenue = price * quantity;
+            const productId = input.id.replace('product_', '');
+            
+            document.getElementById('revenue_' + productId).textContent = 
+                '売上額: ¥' + revenue.toLocaleString();
+        }
+        
+        function updateTotalRevenue() {
+            let totalRevenue = 0;
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                const price = parseInt(input.dataset.price);
+                const quantity = parseInt(input.value) || 0;
+                totalRevenue += price * quantity;
+                updateProductRevenue(input);
+            });
+            
+            document.getElementById('totalRevenuePreview').textContent = 
+                '本日の予想売上総額: ¥' + totalRevenue.toLocaleString();
+        }
+        
+        function resetForm() {
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                input.value = 0;
+                updateProductRevenue(input);
+            });
+            document.getElementById('salesDate').value = /*[[${defaultDate}]]*/ '';
+            updateTotalRevenue();
+        }
+        
+        // 初期化
+        updateTotalRevenue();
+    </script>
+</body>
+</html>

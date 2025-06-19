@@ -1,5 +1,5 @@
-package com.teama.javaproject.entity;
+// package com.teama.javaproject.entity;
 
-public class DailyBeerSales {
+// public class DailyBeerSales {
     
-}
+// }

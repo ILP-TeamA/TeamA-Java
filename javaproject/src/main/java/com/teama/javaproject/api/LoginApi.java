@@ -1,7 +1,7 @@
-package com.teama.javaproject.api;
+// package com.teama.javaproject.api;
 
-public interface LoginApi {
-    public boolean login(String mail, String password);
+// public interface LoginApi {
+//     public boolean login(String mail, String password);
 
 
-}
+// }

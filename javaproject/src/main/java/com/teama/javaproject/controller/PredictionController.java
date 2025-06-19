@@ -1,5 +1,5 @@
-package com.teama.javaproject.controller;
+// package com.teama.javaproject.controller;
 
-public class PredictionController {
+// public class PredictionController {
     
-}
+// }
