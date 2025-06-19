@@ -62,11 +62,11 @@ public class SalesService {
     // 売上データ取得（日付別グループ化）
     public Map<LocalDate, List<SalesRecord>> getSalesDataGroupedByDate() {//キーが日付、値が売上データのリスト
         List<SalesRecord> allRecords = salesRecordRepository.findAll();// 全ての売上データを取得、allRecordsに格納
-        return allRecords.stream()
+        return allRecords.stream()//リストをstreamに変換
                 .collect(Collectors.groupingBy(
-                    SalesRecord::getSalesDate,
-                    LinkedHashMap::new,
-                    Collectors.toList()
+                    SalesRecord::getSalesDate,//キー、売り上げ記録から日付を取得
+                    LinkedHashMap::new,//LinkedHashMapを使用して順序を保持（日付順に表示する
+                    Collectors.toList()//同じ日付の売上データをリストで収集
                 ));
     }
     
@@ -76,12 +76,12 @@ public class SalesService {
             LocalDate.of(2020, 1, 1), LocalDate.now().plusDays(1));
     }
     
-    // 特定日の売上データ存在チェック
+    // 特定日の売上データ存在チェックfindbyで取得リストが空か確認、空であれば!によってfaileseを返す
     public boolean hasSalesDataForDate(LocalDate date) {
         return !salesRecordRepository.findBySalesDateOrderByProductIdAsc(date).isEmpty();
     }
     
-    // 商品名取得のヘルパーメソッド
+    // 商品が見つからない場合のメソッド
     private String getProductName(Long productId) {
         Optional<Product> productOpt = productRepository.findById(productId);
         return productOpt.map(Product::getName).orElse("不明な商品");
