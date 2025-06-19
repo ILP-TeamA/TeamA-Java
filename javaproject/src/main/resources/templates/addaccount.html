@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>アカウント登録</title>
+</head>
+<body>
+    <h2>アカウント登録フォーム</h2>
+
+    <form action="/register" method="post">
+        <label>ユーザー名：</label><br>
+        <input type="text" name="username" required><br><br>
+
+        <label>メールアドレス：</label><br>
+        <input type="email" name="email" required><br><br>
+
+        <label>パスワード：</label><br>
+        <input type="password" name="password" required><br><br>
+
+        <label>役割：</label><br>
+        <input type="radio" name="role" value="admin"> 管理者
+        <input type="radio" name="role" value="employee" checked> 従業員<br><br>
+
+        <button type="submit">登録</button>
+    </form>
+
+    <p><a href="/login">← ログインへ戻る</a></p>
+</body>
+</html>
