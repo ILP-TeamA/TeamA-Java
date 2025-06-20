@@ -1,54 +1,122 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>需要予測</title>
+    <meta charset="UTF-8" />
+    <title>発注量予測／発注</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #F8F0F0;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="date"] {
+            padding: 5px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: #fff;
+        }
+        th, td {
+            border: 1px solid #999;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #F0F0F0;
+        }
+        .button-section {
+            margin-top: 10px;
+            text-align: right;
+        }
+        .link-button {
+            padding: 9px 18px;
+            background-color: #B0D0FF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+        input[type="number"] {
+            padding: 5px;
+        }
+    </style>
 </head>
 <body>
-<h2>需要予測画面</h2>
 
-<!-- 日付入力 -->
-<label>予測日：</label>
-<input type="date" id="prediction-date">
-<button onclick="runPrediction()">予測する</button>
+    <h2>発注量予測／発注</h2>
 
-<hr/>
+    <!-- 予測日入力 -->
+    <div class="form-section">
+        <label>日付：</label>
+        <input type="date" id="prediction-date" />
+        <button onclick="runPrediction()">予測する</button>
+    </div>
 
-<!-- 結果表示 -->
-<h3>結果：</h3>
-<pre id="result"></pre>
+    <hr />
 
-<script>
-function runPrediction() {
-    const date = document.getElementById('prediction-date').value;
+    <!-- 予測テーブル（全体を form にする） -->
+    <form action="/prediction/confirmation" method="post">
+        <table border="1">
+            <tr>
+                <th>商品名</th>
+                <th>予測数量</th>
+                <th>本数入力</th>
+            </tr>
+            <!-- ここでループさせる -->
+            <tr th:each="p, stat : ${predictions}">
+                <td th:text="${p.product.name}">商品名</td>
+                <td th:text="${p.predictedQuantity}">予測数量</td>
+                <td>
+                    <input type="number" name="quantities[${stat.index}]" placeholder="本数入力" required>
+                </td>
+            </tr>
+        </table>
 
-    if (!date) {
-        alert("日付を選択してください！");
-        return;
-    }
+        <!-- 予測日 hidden で送信 -->
+        <input type="hidden" name="date" th:value="${predictionDate}" />
 
-    // ここで fetch 送信！
-    fetch('/api/prediction/run', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date: date })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("エラーが発生しました: " + response.statusText);
+        <div class="button-section">
+            <button type="submit">確認一覧へ</button>
+        </div>
+    </form>
+
+    <script>
+        function runPrediction() {
+            const date = document.getElementById('prediction-date').value;
+            if (!date) {
+                alert('日付を選択してください！');
+                return;
+            }
+
+            const form = document.createElement('form');
+            form.method = 'post';
+            form.action = '/prediction/run';
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'date';
+            input.value = date;
+
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log(data);
-        // 結果を画面に表示
-        document.getElementById('result').innerText = JSON.stringify(data, null, 2);
-    })
-    .catch(error => {
-        console.error(error);
-        document.getElementById('result').innerText = "エラー: " + error.message;
-    });
-}
-</script>
+    </script>
 
 </body>
 </html>
+
