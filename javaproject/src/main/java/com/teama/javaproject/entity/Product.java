@@ -79,4 +79,6 @@ public class Product {
     public void setDailyBeerSales(List<DailyBeerSales> dailyBeerSales) {
         this.dailyBeerSales = dailyBeerSales;
     }
+
+    
 }

@@ -208,47 +208,42 @@
             box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
         }
 
-        .sales-history {
-            padding: 30px;
-            background: white;
+        /* 追加スタイル */
+        .link-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: flex-end;
+            margin: 30px 0 10px 0;
         }
 
-        .sales-history h3 {
-            color: #495057;
-            margin-bottom: 25px;
-            font-size: 1.5em;
+        .link-button {
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: background 0.3s;
         }
 
-        .sales-table-container {
-            overflow-x: auto;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .sales-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-
-        .sales-table thead {
+        .link-button.history {
             background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
+            box-shadow: 0 2px 8px rgba(102,126,234,0.15);
         }
 
-        .sales-table th, .sales-table td {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #e9ecef;
+        .link-button.history:hover {
+            background: linear-gradient(45deg, #5561b3, #6f4c91);
         }
 
-        .sales-table th {
-            font-weight: bold;
-            letter-spacing: 0.5px;
+        .link-button.edit {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            box-shadow: 0 2px 8px rgba(255,107,107,0.15);
         }
 
-        .sales-table tbody tr:hover {
-            background: #f8f9fa;
+        .link-button.edit:hover {
+            background: linear-gradient(45deg, #e55b5b, #d4a300);
         }
     </style>
 </head>
@@ -369,50 +364,11 @@
             </form>
         </div>
         
-        <!-- 売上データ表示 -->
-        <div class="sales-history">
-            <h3>📊 売上データ履歴</h3>
-            <div class="sales-table-container">
-                <table class="sales-table">
-                    <thead>
-                        <tr>
-                            <th>日付</th>
-                            <th>商品名</th>
-                            <th>販売数</th>
-                            <th>売上額</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>2025/06/19</td>
-                            <td>プレミアムIPA</td>
-                            <td>12本</td>
-                            <td>¥9,600</td>
-                        </tr>
-                        <tr>
-                            <td>2025/06/19</td>
-                            <td>ゴールデンエール</td>
-                            <td>8本</td>
-                            <td>¥5,200</td>
-                        </tr>
-                        <tr>
-                            <td>2025/06/18</td>
-                            <td>ダークスタウト</td>
-                            <td>6本</td>
-                            <td>¥4,500</td>
-                        </tr>
-                        <tr>
-                            <td>2025/06/18</td>
-                            <td>ウィートビール</td>
-                            <td>10本</td>
-                            <td>¥6,000</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <!-- 売上履歴ページへのリンクボタン -->
+        <div style="display: flex; gap: 20px; justify-content: flex-end; margin: 30px 0 10px 5%;">
+            <a href="/sales/history" class="link-button history">売上履歴一覧へ</a>
         </div>
-    </div>
-    
+        
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const inputs = document.querySelectorAll('.quantity-input');
@@ -438,7 +394,7 @@
                 });
                 
                 document.getElementById('totalRevenuePreview').textContent =
-                    '本日の予想売上総額: ¥' + totalRevenue.toLocaleString();
+                    '本日の売上総額: ¥' + totalRevenue.toLocaleString();
             }
 
             // フォーム送信の処理

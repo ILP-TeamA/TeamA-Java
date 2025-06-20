@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 
 @Service
@@ -91,7 +93,17 @@ public class SalesService {
             .collect(Collectors.toList());
         
     }
-    
 
+    // 既存データを削除して新規保存
+    public void updateSalesData(Integer salesId, Map<Long, Integer> productSales, Integer createBy) {
+        salesRecordRepository.deleteBySalesId(salesId);
+        registerSalesData(salesId, productSales, createBy);
+    }
+    
+    public List<SalesRecord> getSalesRecordsByDate(LocalDate date) {
+        LocalDateTime start = date.atStartOfDay();
+        LocalDateTime end = date.plusDays(1).atStartOfDay().minusNanos(1);
+        return salesRecordRepository.findByCreatedAtBetweenOrderByProduct_IdAsc(start, end);
+    }
     
 }

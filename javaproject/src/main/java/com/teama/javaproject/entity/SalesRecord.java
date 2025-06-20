@@ -57,4 +57,18 @@ public class SalesRecord {
     public Integer getSalesId() {
         return salesId;
     }
+
+    public Product getProduct() {
+    return product;
+    }
+
+    public Integer getQuantity() {
+    return quantity;
+    }
+
+    public int getRevenue() {
+    return this.quantity * this.product.getUnitPrice();
+    }
+
+
 }

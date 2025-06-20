@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>売上データ編集</title>
+</head>
+<body>
+    <h2>販売ID [[${salesId}]] の編集</h2>
+    <form th:action="@{/sales/edit}" method="post">
+        <input type="hidden" name="salesId" th:value="${salesId}" />
+        <table>
+            <thead>
+                <tr>
+                    <th>商品名</th>
+                    <th>販売数</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="product : ${products}">
+                    <td th:text="${product.name}"></td>
+                    <td>
+                        <input type="number"
+                               min="0"
+                               th:name="'product_' + ${product.id}"
+                               th:value="${salesMap[product.id] != null ? salesMap[product.id] : 0}" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <input type="hidden" name="createBy" value="1" />
+        <button type="submit">更新</button>
+    </form>
+</body>
+</html>

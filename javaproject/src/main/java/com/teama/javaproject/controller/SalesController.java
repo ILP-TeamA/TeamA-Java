@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,5 +115,68 @@ public String showSalesInput(
         return response;
     }
 
-    
+    // 履歴一覧ページ表示
+    @GetMapping("/history")
+    public String showSalesHistory(
+            @RequestParam(value = "date", required = false) String dateStr,
+            Model model) {
+        LocalDate date;
+        if (dateStr == null || dateStr.isEmpty()) {
+            date = LocalDate.now();
+        } else {
+            date = LocalDate.parse(dateStr);
+        }
+        // 指定日付の売上レコード取得
+        List<SalesRecord> salesList = salesService.getSalesRecordsByDate(date);
+        // 総売上額計算
+        int totalAmount = salesList.stream()
+                .mapToInt(SalesRecord::getRevenue) // getAmount()がなければ数量×単価で計算
+                .sum();
+        model.addAttribute("selectedDate", date);
+        model.addAttribute("salesList", salesList);
+        model.addAttribute("totalAmount", totalAmount);
+        return "sales_history";
+    }
+
+    // 編集画面表示
+    @GetMapping("/edit/{salesId}")
+public String editSales(@PathVariable Integer salesId, Model model) {
+    List<Product> products = salesService.getAllProducts();
+    List<SalesRecord> records = salesService.getSalesRecordsBySalesId(salesId);
+    Map<Long, Integer> salesMap = new HashMap<>();
+    for (SalesRecord record : records) {
+        salesMap.put(record.getProduct().getId().longValue(), record.getQuantity());
+    }
+    model.addAttribute("products", products);
+    model.addAttribute("salesId", salesId);
+    model.addAttribute("salesMap", salesMap);
+    return "sales_edit";
+}
+
+   // 編集内容保存
+@PostMapping("/edit")
+public String updateSales(
+        @RequestParam("salesId") Integer salesId,
+        @RequestParam Map<String, String> allParams,
+        @RequestParam("createBy") Integer createBy,
+        RedirectAttributes redirectAttributes) {
+    try {
+        Map<Long, Integer> productSales = new HashMap<>();
+        allParams.forEach((key, value) -> {
+            if (key.startsWith("product_")) {
+                Long productId = Long.parseLong(key.substring(8));
+                Integer quantity = Integer.parseInt(value);
+                if (quantity > 0) {
+                    productSales.put(productId, quantity);
+                }
+            }
+        });
+        salesService.updateSalesData(salesId, productSales, createBy);
+        redirectAttributes.addFlashAttribute("successMessage", "売上データを更新しました");
+    } catch (Exception e) {
+        redirectAttributes.addFlashAttribute("errorMessage", "エラーが発生しました: " + e.getMessage());
+    }
+    return "redirect:/sales/history";
+}
+
 }

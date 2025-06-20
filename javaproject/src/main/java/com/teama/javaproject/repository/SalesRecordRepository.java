@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -35,4 +36,10 @@ public interface SalesRecordRepository extends JpaRepository<SalesRecord, Long> 
     
     // 販売数量での検索
     List<SalesRecord> findByQuantityGreaterThanEqualOrderBySalesIdDesc(Integer quantity);
+
+    // 販売IDで売上データを一括削除
+    void deleteBySalesId(Integer salesId);
+
+    // 指定日の売上レコード取得
+    List<SalesRecord> findByCreatedAtBetweenOrderByProduct_IdAsc(LocalDateTime start, LocalDateTime end);
 }
