@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Comparator;
 
 @Service
 @Transactional
@@ -80,4 +81,17 @@ public class SalesService {
         Optional<Product> productOpt = productRepository.findById(productId.intValue());
         return productOpt.map(Product::getName).orElse("不明な商品");
     }
+
+    public List<Integer> getAllSalesIds() {
+        return salesRecordRepository.findAll()
+            .stream()
+            .map(SalesRecord::getSalesId)
+            .distinct()
+            .sorted(Comparator.reverseOrder())
+            .collect(Collectors.toList());
+        
+    }
+    
+
+    
 }

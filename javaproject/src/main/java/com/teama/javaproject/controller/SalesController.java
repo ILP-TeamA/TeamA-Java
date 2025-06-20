@@ -21,22 +21,49 @@ public class SalesController {
     private SalesService salesService;
     
     // メイン画面表示
-    @GetMapping("")
-    public String showSalesInput(Model model) {
-        // 商品一覧取得
-        List<Product> products = salesService.getAllProducts();
-        model.addAttribute("products", products);
-        
-        // 売上データ取得
-        List<SalesRecord> salesRecords = salesService.getAllSalesRecords();
-        model.addAttribute("salesRecords", salesRecords);
-        
-        // 販売ID別売上データをMap形式で取得
-        Map<Integer, List<SalesRecord>> salesBySalesId = salesService.getSalesDataGroupedBySalesId();
-        model.addAttribute("salesBySalesId", salesBySalesId);
-        
-        return "sales_input";
+@GetMapping("")
+public String showSalesInput(
+    @RequestParam(value = "salesId", required = false) Integer salesId,
+    Model model) {
+    // 商品一覧取得
+    List<Product> products = salesService.getAllProducts();
+    model.addAttribute("products", products);
+
+    // 入力欄に表示する販売データ
+    Map<Long, Integer> salesMap = new HashMap<>();
+    if (salesId != null) {
+        List<SalesRecord> records = salesService.getSalesRecordsBySalesId(salesId);
+        for (SalesRecord record : records) {
+            salesMap.put(record.getProduct().getId().longValue(), record.getQuantity());
+        }
     }
+    model.addAttribute("salesId", salesId);
+    model.addAttribute("salesMap", salesMap);
+
+    // 販売IDリスト（プルダウン用）
+    List<Integer> salesIdList = salesService.getAllSalesIds();
+    model.addAttribute("salesIdList", salesIdList);
+
+
+    return "sales_input";
+}
+
+    // @GetMapping("")
+    // public String showSalesInput(Model model) {
+    //     // 商品一覧取得
+    //     List<Product> products = salesService.getAllProducts();
+    //     model.addAttribute("products", products);
+        
+    //     // 売上データ取得
+    //     List<SalesRecord> salesRecords = salesService.getAllSalesRecords();
+    //     model.addAttribute("salesRecords", salesRecords);
+        
+    //     // 販売ID別売上データをMap形式で取得
+    //     Map<Integer, List<SalesRecord>> salesBySalesId = salesService.getSalesDataGroupedBySalesId();
+    //     model.addAttribute("salesBySalesId", salesBySalesId);
+        
+    //     return "sales_input";
+    // }
     
     // 売上データ一括登録
     @PostMapping("/register")
@@ -86,4 +113,6 @@ public class SalesController {
         response.put("exists", exists);
         return response;
     }
+
+    
 }
