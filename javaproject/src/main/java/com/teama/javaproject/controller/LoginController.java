@@ -1,31 +1,45 @@
 package com.teama.javaproject.controller;
 
+import com.teama.javaproject.service.LoginService;
+import com.teama.javaproject.entity.User;
+import com.teama.javaproject.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import jakarta.servlet.http.HttpSession;
+import java.util.Optional;
 
-import com.teama.javaproject.service.LoginService;
-
-@RestController
-@RequestMapping("/api/auth")
+@Controller
 public class LoginController {
 
     @Autowired
     private LoginService loginService;
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Map<String, String> loginData) {
-        String email = loginData.get("email");
-        String password = loginData.get("password");
+    @Autowired
+    private UserRepository userRepository;
 
-        boolean result = loginService.login(email, password);
-        if (result) {
-            return new ResponseEntity<>("ログイン成功", HttpStatus.OK);
+    @PostMapping("/login")
+    public String login(@RequestParam String email,
+                        @RequestParam String password,
+                        HttpSession session,
+                        Model model) {
+
+        Optional<User> userOpt = userRepository.findByEmail(email);
+
+        if (userOpt.isPresent() && loginService.login(email, password)) {
+            session.setAttribute("loginUser", userOpt.get());
+            return "redirect:/home"; // ログイン成功 → ホーム画面へ
         } else {
-            return new ResponseEntity<>("ログイン失敗", HttpStatus.UNAUTHORIZED);
+            model.addAttribute("error", "メールかパスワードが間違っています");
+            return "login"; // ログイン画面に戻る
         }
+    }
+
+    @GetMapping("/login")
+    public String showLoginPage() {
+        return "login";
     }
 }
