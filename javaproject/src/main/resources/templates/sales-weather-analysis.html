@@ -5,9 +5,255 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>実績・天気・販売実績表示 - クラフトビール発注システム</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/sales-weather-analysis.css}"> <!-- この行を追加 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <!-- <style>タグの中身は全て削除 -->
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin: 0 0 10px 0;
+            font-size: 2.2em;
+        }
+
+        .header p {
+            color: #666;
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        .date-selector {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .date-input-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .date-input-group label {
+            font-weight: bold;
+            color: #333;
+            white-space: nowrap;
+        }
+
+        .date-input {
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            flex: 1;
+            min-width: 150px;
+            
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #5a6fd8, #6a4190);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+
+        .weather-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .weather-section h2 {
+            color: #333;
+            margin: 0 0 20px 0;
+            font-size: 1.5em;
+        }
+
+        .weather-grid {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 5px 0;
+        }
+
+        .weather-day {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            min-width: 80px;
+            flex: 1;
+            white-space: nowrap;
+        }
+
+        .weather-icon {
+            font-size: 2em;
+            margin-bottom: 6px;
+        }
+
+        .weather-date {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+            font-size: 0.85em;
+        }
+
+        .weather-temp {
+            color: #ff6b35;
+            font-weight: bold;
+            margin-bottom: 2px;
+            font-size: 0.8em;
+        }
+
+        .weather-wind {
+            color: #666;
+            font-size: 0.7em;
+        }
+
+        .chart-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-section h2 {
+            color: #333;
+            margin: 0 0 20px 0;
+            font-size: 1.5em;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 20px;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+
+        .bottom-buttons {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .bottom-buttons .btn {
+            margin: 0 10px;
+        }
+
+        /* レスポンシブ対応 */
+        @media (max-width: 768px) {
+            .weather-day {
+                min-width: 70px;
+                padding: 10px 6px;
+            }
+            
+            .weather-icon {
+                font-size: 1.8em;
+            }
+            
+            .weather-temp {
+                font-size: 0.75em;
+            }
+            
+            .weather-wind {
+                font-size: 0.65em;
+            }
+            
+            .date-input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .weather-day {
+                min-width: 60px;
+                padding: 8px 4px;
+            }
+            
+            .weather-icon {
+                font-size: 1.5em;
+            }
+            
+            .weather-date {
+                font-size: 0.8em;
+            }
+            
+            .weather-temp {
+                font-size: 0.7em;
+            }
+            
+            .weather-wind {
+                font-size: 0.6em;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
