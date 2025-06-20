@@ -38,15 +38,27 @@
             text-align: center;
         }
 
-        button {
+        .btn {
             padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
+            font-size: 14px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s;
         }
 
+        /* プライマリボタン */
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
 
@@ -70,7 +82,7 @@
 </table>
 
 <div class="button-section">
-    <button onclick="window.history.back()">戻る</button>
+    <button class="btn btn-primary" onclick="window.history.back()">戻る</button>
 </div>
 
 </body>
