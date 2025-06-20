@@ -39,7 +39,7 @@ public class SalesService {
                     throw new RuntimeException("この日付の" + getProductName(productId) + "は既に登録されています");
                 }
                 
-                Optional<Product> productOpt = productRepository.findById(productId);
+                Optional<Product> productOpt = productRepository.findById(productId.intValue());
                 if (productOpt.isPresent()) {
                     Product product = productOpt.get();
                     SalesRecord record = new SalesRecord(salesDate, product, quantity);
@@ -71,7 +71,7 @@ public class SalesService {
     }
     
     private String getProductName(Long productId) {
-        Optional<Product> productOpt = productRepository.findById(productId);
+        Optional<Product> productOpt = productRepository.findById(productId.intValue());
         return productOpt.map(Product::getName).orElse("不明な商品");
     }
 }

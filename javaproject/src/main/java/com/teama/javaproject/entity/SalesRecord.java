@@ -11,26 +11,27 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class SalesRecord {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id// 主キー
+    @GeneratedValue(strategy = GenerationType.IDENTITY)//
     private Long id;
     
-    @Column(nullable = false)
+    @Column(nullable = false)// 売上日
     private LocalDate salesDate;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)// 商品との多対一関係
+    @JoinColumn(name = "product_id", nullable = false)// 外部キー制約
     private Product product;
     
-    @Column(nullable = false)
+    @Column(nullable = false)// 数量
     private Integer quantity;
     
-    @Column(nullable = false)
+    @Column(nullable = false)// 合計金額
     private Integer totalAmount;
     
-    @Column(nullable = false)
+    @Column(nullable = false)// 作成日時
     private LocalDateTime createdAt;
     
+
     public SalesRecord(LocalDate salesDate, Product product, Integer quantity) {
         this.salesDate = salesDate;
         this.product = product;
@@ -44,5 +45,9 @@ public class SalesRecord {
         if (this.product != null && this.quantity != null) {
             this.totalAmount = this.product.getUnitPrice() * this.quantity;
         }
+    }
+
+    public LocalDate getSalesDate() {
+        return salesDate;
     }
 }
