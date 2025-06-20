@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
@@ -29,20 +28,20 @@ public class SalesService {
         return productRepository.findAll();
     }
     
-    public void registerSalesData(LocalDate salesDate, Map<Long, Integer> productSales) {
+    public void registerSalesData(Integer salesId, Map<Long, Integer> productSales, Integer createBy) {
         for (Map.Entry<Long, Integer> entry : productSales.entrySet()) {
             Long productId = entry.getKey();
             Integer quantity = entry.getValue();
             
             if (quantity > 0) {
-                if (salesRecordRepository.existsBySalesDateAndProduct_Id(salesDate, productId)) {
-                    throw new RuntimeException("この日付の" + getProductName(productId) + "は既に登録されています");
+                if (salesRecordRepository.existsBySalesIdAndProduct_Id(salesId, productId)) {
+                    throw new RuntimeException("この販売ID(" + salesId + ")の" + getProductName(productId) + "は既に登録されています");
                 }
                 
                 Optional<Product> productOpt = productRepository.findById(productId.intValue());
                 if (productOpt.isPresent()) {
                     Product product = productOpt.get();
-                    SalesRecord record = new SalesRecord(salesDate, product, quantity);
+                    SalesRecord record = new SalesRecord(salesId, product, quantity, createBy);
                     salesRecordRepository.save(record);
                 } else {
                     throw new RuntimeException("商品が見つかりません: ID " + productId);
@@ -51,23 +50,30 @@ public class SalesService {
         }
     }
     
-    public Map<LocalDate, List<SalesRecord>> getSalesDataGroupedByDate() {
+    public Map<Integer, List<SalesRecord>> getSalesDataGroupedBySalesId() {
         List<SalesRecord> allRecords = salesRecordRepository.findAll();
         return allRecords.stream()
                 .collect(Collectors.groupingBy(
-                    SalesRecord::getSalesDate,
+                    SalesRecord::getSalesId,
                     LinkedHashMap::new,
                     Collectors.toList()
                 ));
     }
     
     public List<SalesRecord> getAllSalesRecords() {
-        return salesRecordRepository.findBySalesDateBetweenOrderBySalesDateDescProductIdAsc(
-            LocalDate.of(2020, 1, 1), LocalDate.now().plusDays(1));
+        return salesRecordRepository.findAllByOrderBySalesIdDescProduct_IdAsc();
     }
     
-    public boolean hasSalesDataForDate(LocalDate date) {
-        return !salesRecordRepository.findBySalesDateOrderByProductIdAsc(date).isEmpty();
+    public List<SalesRecord> getSalesRecordsBySalesId(Integer salesId) {
+        return salesRecordRepository.findBySalesIdOrderByProduct_IdAsc(salesId);
+    }
+    
+    public boolean hasSalesDataForSalesId(Integer salesId) {
+        return !salesRecordRepository.findBySalesIdOrderByProduct_IdAsc(salesId).isEmpty();
+    }
+    
+    public List<SalesRecord> getSalesRecordsByProductId(Long productId) {
+        return salesRecordRepository.findByProduct_IdOrderBySalesIdDesc(productId);
     }
     
     private String getProductName(Long productId) {

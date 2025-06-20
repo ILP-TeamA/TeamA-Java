@@ -4,13 +4,11 @@ import com.teama.javaproject.entity.Product;
 import com.teama.javaproject.entity.SalesRecord;
 import com.teama.javaproject.service.SalesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,12 +31,9 @@ public class SalesController {
         List<SalesRecord> salesRecords = salesService.getAllSalesRecords();
         model.addAttribute("salesRecords", salesRecords);
         
-        // 日付別売上データをMap形式で取得
-        Map<LocalDate, List<SalesRecord>> salesByDate = salesService.getSalesDataGroupedByDate();
-        model.addAttribute("salesByDate", salesByDate);
-        
-        // 今日の日付をデフォルト値として設定
-        model.addAttribute("defaultDate", LocalDate.now());
+        // 販売ID別売上データをMap形式で取得
+        Map<Integer, List<SalesRecord>> salesBySalesId = salesService.getSalesDataGroupedBySalesId();
+        model.addAttribute("salesBySalesId", salesBySalesId);
         
         return "sales_input";
     }
@@ -46,14 +41,13 @@ public class SalesController {
     // 売上データ一括登録
     @PostMapping("/register")
     public String registerSales(
-            @RequestParam("salesDate") String salesDateStr,
+            @RequestParam("salesId") Integer salesId,
             @RequestParam Map<String, String> allParams,
+            @RequestParam("createBy") Integer createBy,
             RedirectAttributes redirectAttributes) {
-        
+
         try {
-            LocalDate salesDate = LocalDate.parse(salesDateStr);
             Map<Long, Integer> productSales = new HashMap<>();
-            
             allParams.forEach((key, value) -> {
                 if (key.startsWith("product_")) {
                     Long productId = Long.parseLong(key.substring(8));
@@ -63,15 +57,33 @@ public class SalesController {
                     }
                 }
             });
-            
-            // サービス経由で登録
-            salesService.registerSalesData(salesDate, productSales);
+
+            salesService.registerSalesData(salesId, productSales, createBy);
             redirectAttributes.addFlashAttribute("successMessage", "売上データを登録しました");
-            
+
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "エラーが発生しました: " + e.getMessage());
         }
-        
+
         return "redirect:/sales";
+    }
+    
+    // 特定の販売IDの売上データを取得
+    @GetMapping("/details/{salesId}")
+    public String getSalesDetails(@PathVariable Integer salesId, Model model) {
+        List<SalesRecord> salesRecords = salesService.getSalesRecordsBySalesId(salesId);
+        model.addAttribute("salesRecords", salesRecords);
+        model.addAttribute("salesId", salesId);
+        return "sales_details";
+    }
+    
+    // 販売IDの重複チェック用API
+    @GetMapping("/check/{salesId}")
+    @ResponseBody
+    public Map<String, Boolean> checkSalesIdExists(@PathVariable Integer salesId) {
+        boolean exists = salesService.hasSalesDataForSalesId(salesId);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("exists", exists);
+        return response;
     }
 }
