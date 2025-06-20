@@ -1,22 +1,24 @@
-<!-- src/main/resources/templates/login.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>ログイン</title>
+  <meta charset="UTF-8">
+  <title>ログイン</title>
+  <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
-    <h2>Hop & Craft Inc. 注文システム</h2>
+  <div class="login-container">
+    <div class="login-title">
+      <h2>Hop & Craft Inc.<br>注文システム</h2>
+    </div>
     <form action="/login" method="post">
-        <label>メール：</label><br>
-        <input type="email" name="email"><br><br>
+      <label>メール：</label><br>
+      <input type="email" name="email" required><br><br>
 
-        <label>パスワード：</label><br>
-        <input type="password" name="password"><br><br>
+      <label>パスワード：</label><br>
+      <input type="password" name="password" required><br><br>
 
-        <button type="submit">ログイン</button>
+      <button type="submit">ログイン</button>
     </form>
-
-<p style="color:red;">[[${error}]]</p>
+    <p style="color: red;">[[${error}]]</p>
 </body>
 </html>

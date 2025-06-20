@@ -2,14 +2,50 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>トップページ</title>
+    <title>管理メニュー</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 40px;
+        }
+        .menu-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+        .menu-container h2 {
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin: 15px 0;
+        }
+        a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h2>
-        ようこそ、<span th:text="${username}"></span> さん（<span th:text="${role}"></span>）
-    </h2>
-    <p>このページはログイン後に表示されます。</p>
-
-    <a href="/logout">ログアウト</a>
+    <div class="menu-container">
+        <h2>ようこそ、<span th:text="${username}">ユーザー名</span> さん（<span th:text="${role}">役割</span>）</h2>
+        <p>以下のメニューから選択してください。</p>
+        <ul>
+            <li><a th:href="@{/addaccount}">アカウント管理（編集・登録・削除）</a></li>
+            <li><a th:href="@{/prediction}">販売実績入力</a></li>
+            <li><a th:href="@{/sales-weather-analysis}">天気・販売実績表示</a></li>
+            <li><a th:href="@{/prediction}">発注量予測表示／発注</a></li>
+        </ul>
+        <br>
+        <a th:href="@{/logout}">ログアウト</a>
+    </div>
 </body>
 </html>
