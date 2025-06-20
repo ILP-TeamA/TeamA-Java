@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>確認画面 - 発注量予測／発注</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        .button-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<h2>確認画面 - 発注量予測／発注</h2>
+
+<p>日付：<span th:text="${#temporals.format(date, 'yyyy/MM/dd')}"></span></p>
+
+<table>
+    <tr>
+        <th>商品名</th>
+        <th>予測数量</th>
+        <th>本数入力</th>
+    </tr>
+    <tr th:each="p, iterStat : ${predictions}">
+        <td th:text="${p.product.name}">商品名</td>
+        <td th:text="${p.predictedQuantity}">予測数量</td>
+        <td th:text="${quantities[iterStat.index]}">入力本数</td>
+    </tr>
+</table>
+
+<div class="button-section">
+    <button onclick="window.history.back()">戻る</button>
+</div>
+
+</body>
+</html>

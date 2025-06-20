@@ -9,7 +9,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/prediction")
@@ -18,18 +20,50 @@ public class PredictionController {
     @Autowired
     private PredictionService predictionService;
 
-    // GET → 画面表示
+    // 画面表示 (GET)
     @GetMapping
     public String showPredictions(Model model) {
         List<Prediction> predictions = predictionService.getTodayPredictions();
         model.addAttribute("predictions", predictions);
-        return "prediction";
+        model.addAttribute("predictionDate", LocalDate.now());
+        return "prediction"; // templates/prediction.html
     }
 
-    // POST → 予測実行
+    // 予測実行 (POST)
     @PostMapping("/run")
-    public String runPrediction(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    public String runPrediction(
+            @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+
         predictionService.generatePrediction(date);
-        return "redirect:/prediction";
+        // redirect して画面に戻る
+        return "redirect:/prediction?predictionDate=" + date;
+    }
+
+    // 確認画面 (POST)
+    @PostMapping("/confirmation")
+    public String showConfirmation(
+            @RequestParam Map<String, String> paramMap,
+            Model model) {
+
+        // 1️⃣ 取出日期
+        LocalDate date = LocalDate.parse(paramMap.get("date"));
+
+        // 2️⃣ 取出本数输入
+        List<Integer> quantities = new ArrayList<>();
+        paramMap.forEach((key, value) -> {
+            if (key.startsWith("quantities[")) {
+                quantities.add(Integer.parseInt(value));
+            }
+        });
+
+        // 3️⃣ 重新查询对应日期的预测记录
+        List<Prediction> predictions = predictionService.getTodayPredictions();
+
+        // 4️⃣ 填入 model
+        model.addAttribute("predictions", predictions);
+        model.addAttribute("quantities", quantities);
+        model.addAttribute("date", date);
+
+        return "confirmation"; // templates/confirmation.html
     }
 }
