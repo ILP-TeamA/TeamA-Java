@@ -3,7 +3,6 @@ package com.teama.javaproject.controller;
 import com.teama.javaproject.service.LoginService;
 import com.teama.javaproject.entity.User;
 import com.teama.javaproject.repository.UserRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,10 +30,10 @@ public class LoginController {
 
         if (userOpt.isPresent() && loginService.login(email, password)) {
             session.setAttribute("loginUser", userOpt.get());
-            return "redirect:/home"; // ログイン成功 → ホーム画面へ
+            return "redirect:/home";  // 🔁 成功したら/homeへ
         } else {
             model.addAttribute("error", "メールかパスワードが間違っています");
-            return "login"; // ログイン画面に戻る
+            return "login";  // 再び login.html を表示
         }
     }
 
