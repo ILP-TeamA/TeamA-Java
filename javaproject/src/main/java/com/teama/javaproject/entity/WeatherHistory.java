@@ -1,137 +1,188 @@
-
 package com.teama.javaproject.entity;
 
-// import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
-// TODO: データベース接続後にアノテーションのコメントアウトを削除
-// @Entity
-// @Table(name = "weather_history")
+/**
+ * 天気履歴エンティティ
+ * weather_history テーブルに対応
+ */
+@Entity
+@Table(name = "weather_history")
 public class WeatherHistory {
-
-    // @Id
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    // @Column(name = "date", nullable = false)
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
+    
+    @Column(name = "date")
     private LocalDate date;
-
-    // @Column(name = "weather_type", nullable = false, length = 20)
-    private String weatherType; // 晴れ、曇り、雨、雪など
-
-    // @Column(name = "max_temperature", nullable = false)
-    private Integer maxTemperature; // 最高気温（℃）
-
-    // @Column(name = "min_temperature", nullable = false)
-    private Integer minTemperature; // 最低気温（℃）
-
-    // @Column(name = "wind_speed", nullable = false)
-    private Double windSpeed; // 風速（m/s）
-
+    
+    @Column(name = "avg_temperature")
+    private Float avgTemperature;
+    
+    @Column(name = "max_temperature")
+    private Float maxTemperature;
+    
+    @Column(name = "min_temperature")
+    private Float minTemperature;
+    
+    @Column(name = "total_rainfall")
+    private Float totalRainfall;
+    
+    @Column(name = "sunshine_hours")
+    private Float sunshineHours;
+    
+    @Column(name = "avg_humidity")
+    private Float avgHumidity;
+    
+    @Column(name = "weather_condition_day")
+    private String weatherConditionDay;
+    
+    @Column(name = "weather_condition_night")
+    private String weatherConditionNight;
+    
     // デフォルトコンストラクタ
     public WeatherHistory() {}
-
-    // 全フィールドコンストラクタ
-    public WeatherHistory(LocalDate date, String weatherType, Integer maxTemperature, 
-                         Integer minTemperature, Double windSpeed) {
+    
+    // コンストラクタ
+    public WeatherHistory(LocalDate date, Float avgTemperature, Float maxTemperature, 
+                         Float minTemperature, String weatherConditionDay) {
         this.date = date;
-        this.weatherType = weatherType;
+        this.avgTemperature = avgTemperature;
         this.maxTemperature = maxTemperature;
         this.minTemperature = minTemperature;
-        this.windSpeed = windSpeed;
+        this.weatherConditionDay = weatherConditionDay;
     }
-
-    // Getter and Setter methods
-    public Long getId() {
+    
+    // ビジネスロジック用メソッド
+    
+    /**
+     * 天気アイコンを取得
+     */
+    public String getWeatherIcon() {
+        if (weatherConditionDay == null) return "❓";
+        
+        switch (weatherConditionDay.toLowerCase()) {
+            case "晴れ":
+            case "快晴":
+                return "☀️";
+            case "曇り":
+            case "薄曇り":
+                return "☁️";
+            case "雨":
+            case "小雨":
+            case "大雨":
+                return "🌧️";
+            case "雪":
+            case "大雪":
+                return "❄️";
+            case "晴れ時々曇り":
+                return "🌤️";
+            default:
+                return "🌥️";
+        }
+    }
+    
+    /**
+     * 気温範囲の表示文字列を取得
+     */
+    public String getTemperatureRange() {
+        if (minTemperature == null || maxTemperature == null) {
+            return "データなし";
+        }
+        return String.format("%.0f℃ / %.0f℃", minTemperature, maxTemperature);
+    }
+    
+    /**
+     * 風速表示（仮想データとして平均湿度を使用）
+     */
+    public String getWindSpeedDisplay() {
+        if (avgHumidity == null) return "データなし";
+        // 湿度から風速を推定（仮想計算）
+        double windSpeed = avgHumidity / 20.0;
+        return String.format("%.1f m/s", windSpeed);
+    }
+    
+    // Getter/Setter
+    public Integer getId() {
         return id;
     }
-
-    public void setId(Long id) {
+    
+    public void setId(Integer id) {
         this.id = id;
     }
-
+    
     public LocalDate getDate() {
         return date;
     }
-
+    
     public void setDate(LocalDate date) {
         this.date = date;
     }
-
-    public String getWeatherType() {
-        return weatherType;
+    
+    public Float getAvgTemperature() {
+        return avgTemperature;
     }
-
-    public void setWeatherType(String weatherType) {
-        this.weatherType = weatherType;
+    
+    public void setAvgTemperature(Float avgTemperature) {
+        this.avgTemperature = avgTemperature;
     }
-
-    public Integer getMaxTemperature() {
+    
+    public Float getMaxTemperature() {
         return maxTemperature;
     }
-
-    public void setMaxTemperature(Integer maxTemperature) {
+    
+    public void setMaxTemperature(Float maxTemperature) {
         this.maxTemperature = maxTemperature;
     }
-
-    public Integer getMinTemperature() {
+    
+    public Float getMinTemperature() {
         return minTemperature;
     }
-
-    public void setMinTemperature(Integer minTemperature) {
+    
+    public void setMinTemperature(Float minTemperature) {
         this.minTemperature = minTemperature;
     }
-
-    public Double getWindSpeed() {
-        return windSpeed;
+    
+    public Float getTotalRainfall() {
+        return totalRainfall;
     }
-
-    public void setWindSpeed(Double windSpeed) {
-        this.windSpeed = windSpeed;
+    
+    public void setTotalRainfall(Float totalRainfall) {
+        this.totalRainfall = totalRainfall;
     }
-
-    /**
-     * 天気アイコンを取得（ワイヤーフレームに対応）
-     */
-    public String getWeatherIcon() {
-        switch (weatherType) {
-            case "晴れ":
-                return "☀️";
-            case "曇り":
-                return "☁️";
-            case "雨":
-                return "☔";
-            case "雪":
-                return "❄️";
-            default:
-                return "🌤️";
-        }
+    
+    public Float getSunshineHours() {
+        return sunshineHours;
     }
-
-    /**
-     * 温度範囲を表示用文字列で取得
-     */
-    public String getTemperatureRange() {
-        return minTemperature + "℃ / " + maxTemperature + "℃";
+    
+    public void setSunshineHours(Float sunshineHours) {
+        this.sunshineHours = sunshineHours;
     }
-
-    /**
-     * 風速を表示用文字列で取得
-     */
-    public String getWindSpeedDisplay() {
-        return String.format("%.1f m/s", windSpeed);
+    
+    public Float getAvgHumidity() {
+        return avgHumidity;
     }
-
-    @Override
-    public String toString() {
-        return "WeatherHistory{" +
-                "id=" + id +
-                ", date=" + date +
-                ", weatherType='" + weatherType + '\'' +
-                ", maxTemperature=" + maxTemperature +
-                ", minTemperature=" + minTemperature +
-                ", windSpeed=" + windSpeed +
-                '}';
+    
+    public void setAvgHumidity(Float avgHumidity) {
+        this.avgHumidity = avgHumidity;
+    }
+    
+    public String getWeatherConditionDay() {
+        return weatherConditionDay;
+    }
+    
+    public void setWeatherConditionDay(String weatherConditionDay) {
+        this.weatherConditionDay = weatherConditionDay;
+    }
+    
+    public String getWeatherConditionNight() {
+        return weatherConditionNight;
+    }
+    
+    public void setWeatherConditionNight(String weatherConditionNight) {
+        this.weatherConditionNight = weatherConditionNight;
     }
 }
-
