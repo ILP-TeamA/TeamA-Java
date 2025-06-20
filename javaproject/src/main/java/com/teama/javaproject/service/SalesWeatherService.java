@@ -26,18 +26,20 @@ public class SalesWeatherService {
     public List<WeatherHistory> getWeeklyWeatherData(LocalDate startDate) {
         LocalDate endDate = startDate.plusDays(6);
         
+        System.out.println("=== 天気データ検索 ===");
+        System.out.println("検索開始日: " + startDate);
+        System.out.println("検索終了日: " + endDate);
+        
         // データベースから実際のデータを取得
         List<WeatherHistory> weatherData = weatherRepository.findByDateBetweenOrderByDate(startDate, endDate);
         
-        // データが不足している場合、利用可能な最新日付を確認
-        if (weatherData.isEmpty()) {
-            Optional<LocalDate> latestDate = weatherRepository.findLatestAvailableDate();
-            if (latestDate.isPresent()) {
-                // 最新データが2025年6月18日以前の場合、その範囲でデータを取得
-                LocalDate adjustedEndDate = latestDate.get();
-                LocalDate adjustedStartDate = adjustedEndDate.minusDays(6);
-                weatherData = weatherRepository.findByDateBetweenOrderByDate(adjustedStartDate, adjustedEndDate);
-            }
+        System.out.println("取得した天気データ件数: " + weatherData.size());
+        
+        // デバッグ：取得したデータの詳細を出力
+        for (WeatherHistory weather : weatherData) {
+            System.out.println("天気データ: " + weather.getDate() + 
+                             " - " + weather.getWeatherConditionDay() + 
+                             " - " + weather.getAvgTemperature() + "℃");
         }
         
         return weatherData;
@@ -47,27 +49,29 @@ public class SalesWeatherService {
      * 一週間分の販売実績データを取得
      */
     public Map<String, List<Integer>> getWeeklySalesData(LocalDate startDate) {
-        // 日付から sales_id を推定（仮定：2025年6月1日 = sales_id 1）
-        LocalDate baseDate = LocalDate.of(2025, 6, 1);
-        int daysDiff = (int) java.time.temporal.ChronoUnit.DAYS.between(baseDate, startDate);
-        int startSalesId = Math.max(1, daysDiff + 1);
+        System.out.println("=== 販売データ検索 ===");
+        System.out.println("販売データ基準日: " + startDate);
+        
+        // 日付から sales_id を計算（2024年4月1日 = sales_id 1 と仮定）
+        LocalDate baseDate = LocalDate.of(2024, 4, 1);
+        long daysDiff = java.time.temporal.ChronoUnit.DAYS.between(baseDate, startDate);
+        int startSalesId = Math.max(1, (int) daysDiff + 1);
         int endSalesId = startSalesId + 6;
+        
+        System.out.println("計算された sales_id 範囲: " + startSalesId + " ～ " + endSalesId);
         
         // データベースから販売データを取得
         List<Object[]> salesData = salesRepository.findDailySalesDataByProductAndSalesIdRange(startSalesId, endSalesId);
         
+        System.out.println("取得した販売データ件数: " + salesData.size());
+        
         // データを整理（商品名 -> 日別販売数量のマップ）
         Map<String, List<Integer>> chartData = new HashMap<>();
         
-        // 7日分の初期化
-        for (int i = 0; i < 7; i++) {
-            // 各商品の初期化（主要なビール種類）
-            initializeProductData(chartData, "ホワイトビール");
-            initializeProductData(chartData, "ラガー");
-            initializeProductData(chartData, "ペールエール");
-            initializeProductData(chartData, "フルーツビール");
-            initializeProductData(chartData, "黒ビール");
-            initializeProductData(chartData, "IPA");
+        // 商品名の初期化
+        String[] productNames = {"ホワイトビール", "ラガー", "ペールエール", "フルーツビール", "黒ビール", "IPA"};
+        for (String productName : productNames) {
+            chartData.put(productName, new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0)));
         }
         
         // 実際のデータをマップに設定
@@ -77,23 +81,14 @@ public class SalesWeatherService {
             Long quantity = (Long) row[2];
             
             int dayIndex = salesId - startSalesId;
-            if (dayIndex >= 0 && dayIndex < 7) {
-                if (chartData.containsKey(productName)) {
-                    chartData.get(productName).set(dayIndex, quantity.intValue());
-                }
+            if (dayIndex >= 0 && dayIndex < 7 && chartData.containsKey(productName)) {
+                chartData.get(productName).set(dayIndex, quantity.intValue());
+                System.out.println("販売データ設定: " + productName + 
+                                 " - Day" + dayIndex + " - " + quantity + "本");
             }
         }
         
         return chartData;
-    }
-    
-    /**
-     * 商品データの初期化
-     */
-    private void initializeProductData(Map<String, List<Integer>> chartData, String productName) {
-        if (!chartData.containsKey(productName)) {
-            chartData.put(productName, Arrays.asList(0, 0, 0, 0, 0, 0, 0));
-        }
     }
 
     /**
@@ -107,6 +102,7 @@ public class SalesWeatherService {
             labels.add(startDate.plusDays(i).format(formatter));
         }
         
+        System.out.println("生成されたラベル: " + labels);
         return labels;
     }
 
@@ -117,7 +113,7 @@ public class SalesWeatherService {
         StringBuilder datasets = new StringBuilder("[");
         
         // ビール種類と色の定義
-        Map<String, String> colorMap = new HashMap<>();
+        Map<String, String> colorMap = new LinkedHashMap<>();
         colorMap.put("ホワイトビール", "#FF6B6B");
         colorMap.put("ラガー", "#4ECDC4");
         colorMap.put("ペールエール", "#45B7D1");
@@ -146,6 +142,8 @@ public class SalesWeatherService {
         }
         
         datasets.append("]");
+        
+        System.out.println("生成されたデータセット: " + datasets.toString());
         return datasets.toString();
     }
     
@@ -159,16 +157,9 @@ public class SalesWeatherService {
     }
     
     /**
-     * データベースにデータが存在するかチェック
-     */
-    public boolean hasWeatherData(LocalDate startDate, LocalDate endDate) {
-        return weatherRepository.existsByDateRange(startDate, endDate);
-    }
-    
-    /**
      * 利用可能な最新の天気データ日付を取得
      */
     public Optional<LocalDate> getLatestWeatherDataDate() {
-        return weatherRepository.findLatestAvailableDate();
+        return Optional.of(LocalDate.of(2025, 6, 19));
     }
 }

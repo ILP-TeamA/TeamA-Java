@@ -56,8 +56,6 @@ public class WeatherHistory {
         this.weatherConditionDay = weatherConditionDay;
     }
     
-    // ビジネスロジック用メソッド
-    
     /**
      * 天気アイコンを取得
      */
