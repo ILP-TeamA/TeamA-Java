@@ -6,122 +6,127 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #F9FAFB;
-            padding: 20px;
+            background-color: #f8f5fc;
+            margin: 0;
+            padding: 0;
         }
 
         .header {
-            background: linear-gradient(to right, #6A11CB, #2575FC);
+            background: linear-gradient(to right, #7b2ff7, #f107a3);
             color: white;
             padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
             font-size: 20px;
             font-weight: bold;
         }
 
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
         .form-section {
-            display: flex;
-            align-items: center;
-            gap: 10px;
             margin-bottom: 20px;
         }
 
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
         input[type="date"] {
-            padding: 8px 12px;
-            border: 1px solid #CCC;
+            padding: 6px 10px;
+            border: 1px solid #ccc;
             border-radius: 5px;
         }
 
         button {
-            padding: 8px 16px;
-            background-color: #4F46E5;
+            padding: 10px 20px;
+            background-color: #7b2ff7;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background 0.3s ease;
+            margin-left: 10px;
         }
 
         button:hover {
-            background-color: #3730A3;
+            background-color: #5e23c9;
         }
 
         table {
-            border-collapse: collapse;
             width: 100%;
-            background-color: #fff;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-collapse: collapse;
+            margin-top: 20px;
         }
 
         th, td {
-            border-bottom: 1px solid #EEE;
-            padding: 12px 15px;
+            border: 1px solid #ddd;
+            padding: 12px;
             text-align: center;
         }
 
         th {
-            background-color: #F0F0F0;
-            font-weight: bold;
+            background-color: #f0ebfa;
+            color: #333;
         }
 
         .button-section {
-            margin-top: 20px;
             text-align: right;
+            margin-top: 20px;
         }
 
-        .confirm-button {
-            padding: 10px 20px;
-            background-color: #06B6D4;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 14px;
-            cursor: pointer;
+        .button-section button {
+            background-color: #7b2ff7;
         }
 
-        .confirm-button:hover {
-            background-color: #0891B2;
+        .button-section button:hover {
+            background-color: #5e23c9;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">発注量予測／発注</div>
-
-    <!-- 予測日入力 -->
-    <div class="form-section">
-        <label style="font-weight: bold;">日付：</label>
-        <input type="date" id="prediction-date" />
-        <button onclick="runPrediction()">予測する</button>
+    <div class="header">
+        発注量予測／発注
     </div>
 
-    <!-- 予測テーブル（全体を form にする） -->
-    <form action="/prediction/confirmation" method="post">
-        <table>
-            <tr>
-                <th>商品名</th>
-                <th>予測数量</th>
-                <th>本数入力</th>
-            </tr>
-            <tr th:each="p, stat : ${predictions}">
-                <td th:text="${p.product.name}">商品名</td>
-                <td th:text="${p.predictedQuantity}">予測数量</td>
-                <td>
-                    <input type="number" name="quantities[${stat.index}]" placeholder="本数入力" required style="padding: 6px; border: 1px solid #CCC; border-radius: 5px;">
-                </td>
-            </tr>
-        </table>
-
-        <!-- 予測日 hidden で送信 -->
-        <input type="hidden" name="date" th:value="${predictionDate}" />
-
-        <div class="button-section">
-            <button type="submit" class="confirm-button">確認一覧へ</button>
+    <div class="container">
+        <!-- 予測日入力 -->
+        <div class="form-section">
+            <label>日付：</label>
+            <input type="date" id="prediction-date" />
+            <button onclick="runPrediction()">予測する</button>
         </div>
-    </form>
+
+        <!-- 予測テーブル -->
+        <form action="/prediction/confirmation" method="post">
+            <table>
+                <tr>
+                    <th>商品名</th>
+                    <th>予測数量</th>
+                    <th>本数入力</th>
+                </tr>
+                <tr th:each="p, stat : ${predictions}">
+                    <td th:text="${p.product.name}">商品名</td>
+                    <td th:text="${p.predictedQuantity}">予測数量</td>
+                    <td>
+                        <input type="number" name="quantities[${stat.index}]" placeholder="本数入力" required style="padding: 6px; border: 1px solid #ccc; border-radius: 5px;">
+                    </td>
+                </tr>
+            </table>
+
+            <!-- 予測日 hidden -->
+            <input type="hidden" name="date" th:value="${predictionDate}" />
+
+            <div class="button-section">
+                <button type="submit">確認一覧へ</button>
+            </div>
+        </form>
+    </div>
 
     <script>
         function runPrediction() {
