@@ -1,6 +1,5 @@
 package com.teama.javaproject.service;
 
-import com.teama.javaproject.entity.DailyBeerSales;
 import com.teama.javaproject.entity.WeatherHistory;
 import com.teama.javaproject.repository.DailyBeerSalesRepository;
 import com.teama.javaproject.repository.WeatherHistoryRepository;

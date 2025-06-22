@@ -4,7 +4,6 @@ import com.teama.javaproject.entity.Product;
 import com.teama.javaproject.entity.SalesRecord;
 import com.teama.javaproject.service.SalesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
