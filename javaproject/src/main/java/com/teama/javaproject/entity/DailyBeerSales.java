@@ -1,7 +1,6 @@
 package com.teama.javaproject.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
 
 /**
  * 日別ビール販売明細エンティティ
