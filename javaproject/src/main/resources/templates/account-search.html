@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アカウント検索・編集 - クラフトビール発注システム</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        .search-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-form {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .result-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #495057;
+            min-width: 120px;
+        }
+
+        .info-value {
+            flex: 1;
+            margin-left: 20px;
+            margin-right: 15px;
+            color: #333;
+        }
+
+        .edit-btn {
+            background: linear-gradient(45deg, #ffc107, #ff8c00);
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9em;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+            text-decoration: none;
+            color: white;
+        }
+
+        .role-display {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .delete-section {
+            background: #fff5f5;
+            border: 2px solid #fed7d7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .delete-btn {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+        }
+
+        .back-btn {
+            background: linear-gradient(45deg, #6c757d, #495057);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(45deg, #5a6268, #343a40);
+            transform: translateY(-2px);
+            text-decoration: none;
+            color: white;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .info-row {
+                flex-direction: column;
+                align-items: start;
+                gap: 10px;
+            }
+            
+            .info-value {
+                margin: 0;
+            }
+        }
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-user-edit"></i> アカウント検索・編集</h1>
+            <p>編集するアカウントを検索してください</p>
+        </div>
+
+        <!-- メッセージ表示 -->
+        <div th:if="${successMessage}" class="message success-message">
+            <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+        </div>
+        
+        <div th:if="${errorMessage}" class="message error-message">
+            <i class="fas fa-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- 検索セクション -->
+        <div class="search-section">
+            <h3><i class="fas fa-search"></i> ユーザー検索</h3>
+            <form action="/account/search" method="post" class="search-form">
+                <div class="form-group">
+                    <label for="searchEmail">メールアドレス</label>
+                    <input type="email" 
+                           id="searchEmail" 
+                           name="searchEmail" 
+                           class="form-control" 
+                           required 
+                           th:value="${searchEmail}"
+                           placeholder="検索するメールアドレスを入力">
+                </div>
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i> 検索
+                </button>
+            </form>
+        </div>
+
+        <!-- 検索結果表示 -->
+        <div th:if="${foundUser}" class="result-section">
+            <h3><i class="fas fa-user"></i> ユーザー情報</h3>
+            
+            <div class="user-info">
+                <div class="info-row">
+                    <div class="info-label">
+                        <i class="fas fa-user"></i> ユーザー名
+                    </div>
+                    <div class="info-value" th:text="${foundUser.username}">ユーザー名</div>
+                    <a th:href="@{'/account/edit/username/' + ${foundUser.userId}}" class="edit-btn">
+                        <i class="fas fa-edit"></i> 編集
+                    </a>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">
+                        <i class="fas fa-envelope"></i> メール
+                    </div>
+                    <div class="info-value" th:text="${foundUser.email}">メールアドレス</div>
+                    <a th:href="@{'/account/edit/email/' + ${foundUser.userId}}" class="edit-btn">
+                        <i class="fas fa-edit"></i> 編集
+                    </a>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">
+                        <i class="fas fa-lock"></i> パスワード
+                    </div>
+                    <div class="info-value">••••••••</div>
+                    <a th:href="@{'/account/edit/password/' + ${foundUser.userId}}" class="edit-btn">
+                        <i class="fas fa-edit"></i> 編集
+                    </a>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">
+                        <i class="fas fa-user-tag"></i> 役割
+                    </div>
+                    <div class="info-value">
+                        <span class="role-display" th:text="${foundUser.role == 'admin' ? '管理者' : '従業員'}">役割</span>
+                        <small style="color: #666; margin-left: 10px;">(変更不可)</small>
+                    </div>
+                    <div style="width: 60px;"></div> <!-- 編集ボタンの代わりのスペース -->
+                </div>
+            </div>
+
+            <!-- 削除セクション -->
+            <div class="delete-section">
+                <h4><i class="fas fa-exclamation-triangle"></i> 危険操作</h4>
+                <p>このアカウントを完全に削除します。この操作は取り消せません。</p>
+                <button class="delete-btn" onclick="confirmDelete()">
+                    <i class="fas fa-trash"></i> アカウントを削除
+                </button>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a href="/account/management" class="back-btn">
+                <i class="fas fa-arrow-left"></i> アカウント管理に戻る
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function confirmDelete() {
+            if (confirm('本当にこのアカウントを削除しますか？\nこの操作は取り消せません。')) {
+                // 削除フォームを動的に作成して送信
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/account/delete/' + /*[[${foundUser.userId}]]*/ '1';
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+</body>
+</html>
