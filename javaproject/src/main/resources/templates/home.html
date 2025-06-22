@@ -39,8 +39,8 @@
         <h2>ようこそ、<span th:text="${username}">ユーザー名</span> さん（<span th:text="${role}">役割</span>）</h2>
         <p>以下のメニューから選択してください。</p>
         <ul>
-            <li><a th:href="@{/addaccount}">アカウント管理（編集・登録・削除）</a></li>
-            <li><a th:href="@{/prediction}">販売実績入力</a></li>
+            <li><a th:href="@{/account/management}">アカウント管理（編集・登録・削除）</a></li>
+            <li><a th:href="@{/sales}">販売実績入力</a></li>
             <li><a th:href="@{/sales-weather-analysis}">天気・販売実績表示</a></li>
             <li><a th:href="@{/prediction}">発注量予測表示／発注</a></li>
         </ul>
