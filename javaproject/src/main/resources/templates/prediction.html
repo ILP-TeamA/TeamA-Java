@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8" />
     <title>発注量予測／発注</title>
@@ -24,7 +25,7 @@
             margin: 20px auto;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             padding: 20px;
         }
 
@@ -63,7 +64,8 @@
             margin-top: 20px;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #ddd;
             padding: 12px;
             text-align: center;
@@ -88,6 +90,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="header">
@@ -114,7 +117,12 @@
                     <td th:text="${p.product.name}">商品名</td>
                     <td th:text="${p.predictedQuantity}">予測数量</td>
                     <td>
-                        <input type="number" name="quantities[${stat.index}]" placeholder="本数入力" required style="padding: 6px; border: 1px solid #ccc; border-radius: 5px;">
+                        <!-- 修正前（問題のあるコード） -->
+                        <!-- <input type="number" name="quantities[${stat.index}]" placeholder="本数入力" required style="padding: 6px; border: 1px solid #ccc; border-radius: 5px;"> -->
+
+                        <!-- 修正後（正しいコード） -->
+                        <input type="number" th:name="|quantities[${stat.index}]|" placeholder="本数入力" required
+                            style="padding: 6px; border: 1px solid #ccc; border-radius: 5px;">
                     </td>
                 </tr>
             </table>
@@ -126,6 +134,7 @@
                 <button type="submit">確認一覧へ</button>
             </div>
         </form>
+
     </div>
 
     <script>
@@ -152,4 +161,5 @@
     </script>
 
 </body>
+
 </html>
