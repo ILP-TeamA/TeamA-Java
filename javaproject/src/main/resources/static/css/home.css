@@ -1,0 +1,43 @@
+body {
+    background: linear-gradient(to right, #5f2c82, #49a09d); /* アカウント管理と同じ背景 */
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    width: 400px;
+}
+
+.container h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.container p {
+    font-size: 14px;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+.container a {
+    display: block;
+    font-size: 15px;
+    margin: 10px 0;
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.container a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}

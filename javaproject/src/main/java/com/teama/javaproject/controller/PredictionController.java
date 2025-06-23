@@ -26,27 +26,46 @@ public class PredictionController {
                                   @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate predictionDate,
                                   Model model) {
 
-        // 如果没有传 date，默认今天
+        System.out.println("=== 予測画面表示 ===");
+        
+        // デフォルト日付設定
         if (predictionDate == null) {
             predictionDate = LocalDate.now();
         }
+        
+        System.out.println("表示対象日付: " + predictionDate);
 
+        // 予測データを取得
         List<Prediction> predictions = predictionService.getPredictionsByDate(predictionDate);
-
+        
+        // モデルに追加
         model.addAttribute("predictions", predictions);
         model.addAttribute("predictionDate", predictionDate);
 
+        System.out.println("画面に表示する予測データ件数: " + predictions.size());
+        
         return "prediction"; // templates/prediction.html
     }
 
-    // 予測実行 (GET + POST 兼用)
-    @RequestMapping(value = "/run", method = {RequestMethod.GET, RequestMethod.POST})
+    // 予測実行 (POST)
+    @PostMapping("/run")
     public String runPrediction(@RequestParam("date") 
                                 @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
 
-        predictionService.generatePrediction(date);
+        System.out.println("=== 予測実行リクエスト ===");
+        System.out.println("リクエスト日付: " + date);
 
-        // redirect → /prediction?predictionDate=xxxx-xx-xx
+        try {
+            // 予測を実行
+            List<Prediction> predictions = predictionService.generatePrediction(date);
+            System.out.println("予測実行成功。生成件数: " + predictions.size());
+            
+        } catch (Exception e) {
+            System.err.println("予測実行エラー: " + e.getMessage());
+            // エラーが発生してもリダイレクトして、エラーメッセージは画面で表示
+        }
+
+        // 予測結果画面にリダイレクト
         return "redirect:/prediction?predictionDate=" + date;
     }
 
@@ -55,29 +74,62 @@ public class PredictionController {
     public String showConfirmation(@RequestParam Map<String, String> paramMap,
                                    Model model) {
 
-        // 1️⃣ DEBUG paramMap
-        System.out.println("DEBUG paramMap = " + paramMap);
+        System.out.println("=== 確認画面遷移 ===");
+        System.out.println("受信パラメータ: " + paramMap);
 
-        // 2️⃣ 取出日期
-        LocalDate date = LocalDate.parse(paramMap.get("date"));
-
-        // 3️⃣ 取出本数入力
-        List<Integer> quantities = new ArrayList<>();
-        paramMap.forEach((key, value) -> {
-            if (key.startsWith("quantities[")) {
-                quantities.add(Integer.parseInt(value));
+        try {
+            // 1️⃣ 日付を取得
+            String dateStr = paramMap.get("date");
+            if (dateStr == null || dateStr.isEmpty()) {
+                throw new IllegalArgumentException("日付パラメータが見つかりません");
             }
-        });
+            LocalDate date = LocalDate.parse(dateStr);
+            System.out.println("確認画面の日付: " + date);
 
-        // 4️⃣ 再查询当天的预测记录
-        List<Prediction> predictions = predictionService.getPredictionsByDate(date);
+            // 2️⃣ 数量入力を取得
+            List<Integer> quantities = new ArrayList<>();
+            
+            // パラメータから quantities[0], quantities[1], ... を抽出
+            int index = 0;
+            while (true) {
+                String quantityKey = "quantities[" + index + "]";
+                String quantityValue = paramMap.get(quantityKey);
+                
+                if (quantityValue == null) {
+                    break; // もうないので終了
+                }
+                
+                try {
+                    int quantity = Integer.parseInt(quantityValue);
+                    quantities.add(quantity);
+                    System.out.println("数量[" + index + "]: " + quantity);
+                } catch (NumberFormatException e) {
+                    quantities.add(0); // パースエラーの場合は0
+                    System.out.println("数量[" + index + "]: パースエラー、0に設定");
+                }
+                
+                index++;
+            }
 
-        // 5️⃣ 填入 model
-        model.addAttribute("predictions", predictions);
-        model.addAttribute("quantities", quantities);
-        model.addAttribute("date", date);
+            System.out.println("合計入力数量件数: " + quantities.size());
 
-        return "confirmation"; // templates/confirmation.html
+            // 3️⃣ 予測データを再取得
+            List<Prediction> predictions = predictionService.getPredictionsByDate(date);
+            System.out.println("確認画面用予測データ件数: " + predictions.size());
+
+            // 4️⃣ モデルに設定
+            model.addAttribute("predictions", predictions);
+            model.addAttribute("quantities", quantities);
+            model.addAttribute("date", date);
+
+            return "confirmation"; // templates/confirmation.html
+
+        } catch (Exception e) {
+            System.err.println("確認画面エラー: " + e.getMessage());
+            e.printStackTrace();
+            
+            // エラー時は予測画面に戻る
+            return "redirect:/prediction";
+        }
     }
-
 }
