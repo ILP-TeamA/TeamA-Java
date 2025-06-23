@@ -1,51 +1,157 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>管理メニュー</title>
     <style>
-        body {
-            font-family: sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 40px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .menu-container {
-            background-color: white;
-            padding: 30px;
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .home-container {
+            background: white;
             border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .welcome-message {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .menu-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .menu-section {
+            margin-bottom: 30px;
+        }
+
+        .menu-link {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-link:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .menu-link:hover:before {
+            left: 100%;
+        }
+
+        .menu-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .menu-link:active {
+            transform: translateY(0);
+        }
+
+        .menu-icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .logout-button {
+            background: #6c757d;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-decoration: none;
             display: inline-block;
         }
-        .menu-container h2 {
+
+        .logout-button:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .user-info {
+            color: #666;
+            font-size: 14px;
             margin-bottom: 20px;
         }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        li {
-            margin: 15px 0;
-        }
-        a {
-            text-decoration: none;
-            color: #007BFF;
-            font-weight: bold;
+
+        .divider {
+            height: 1px;
+            background: #e9ecef;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
-    <div class="menu-container">
-        <h2>ようこそ、<span th:text="${username}">ユーザー名</span> さん（<span th:text="${role}">役割</span>）</h2>
-        <p>以下のメニューから選択してください。</p>
-        <ul>
-            <li><a th:href="@{/account/management}">アカウント管理（編集・登録・削除）</a></li>
-            <li><a th:href="@{/sales}">販売実績入力</a></li>
-            <li><a th:href="@{/sales-weather-analysis}">天気・販売実績表示</a></li>
-            <li><a th:href="@{/prediction}">発注量予測表示／発注</a></li>
-        </ul>
-        <br>
-        <a th:href="@{/logout}">ログアウト</a>
+    <div class="home-container">
+        <h1 class="welcome-message">ようこそ、kouniさん (admin)</h1>
+        <p class="menu-subtitle">以下のメニューから選択してください。</p>
+        
+        <div class="menu-section">
+            <a href="/account/management" class="menu-link">
+                <span class="menu-icon">👥</span>
+                アカウント管理（編集・登録・削除）
+            </a>
+            
+            <a href="/sales" class="menu-link">
+                <span class="menu-icon">📝</span>
+                販売実績入力
+            </a>
+            
+            <a href="/sales-weather-analysis" class="menu-link">
+                <span class="menu-icon">🌤️</span>
+                天気・販売実績表示
+            </a>
+            
+            <a href="/prediction" class="menu-link">
+                <span class="menu-icon">📊</span>
+                発注量予測表示・発注
+            </a>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <a href="/logout" class="logout-button">ログアウト</a>
     </div>
 </body>
 </html>
