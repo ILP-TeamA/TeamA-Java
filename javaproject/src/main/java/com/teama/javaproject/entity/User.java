@@ -5,6 +5,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
 
 @Entity
 @Table(name = "users")
@@ -12,14 +13,30 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    @Column(name = "user_id")
+    private Long userId;  // String から Long に変更
 
+    @Column(name = "username")
     private String username;
+    
+    @Column(name = "email")
     private String email;
+    
+    @Column(name = "password_hash")
     private String passwordHash;
+    
+    @Column(name = "role")
     private String role;
 
     // Getter & Setter
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
     public String getUsername() {
         return username;
     }
