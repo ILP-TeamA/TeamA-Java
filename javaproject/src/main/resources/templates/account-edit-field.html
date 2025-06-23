@@ -4,284 +4,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${editType == 'username' ? 'ユーザー名編集' : (editType == 'email' ? 'メール編集' : 'パスワード編集')} + ' - クラフトビール発注システム'">編集</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            color: #333;
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        .user-info {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        .user-info strong {
-            color: #495057;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 1em;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.3s ease;
-            box-sizing: border-box;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .current-value {
-            background: #e3f2fd;
-            padding: 10px 15px;
-            border-radius: 6px;
-            color: #1976d2;
-            font-weight: 500;
-            margin-bottom: 10px;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
-        }
-
-        .submit-btn {
-            flex: 1;
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
-        }
-
-        .cancel-btn {
-            flex: 1;
-            background: linear-gradient(45deg, #6c757d, #495057);
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: bold;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .cancel-btn:hover {
-            background: linear-gradient(45deg, #5a6268, #343a40);
-            transform: translateY(-2px);
-            text-decoration: none;
-            color: white;
-        }
-
-        .help-text {
-            font-size: 0.9em;
-            color: #6c757d;
-            margin-top: 5px;
-        }
-
-        .confirmation-section {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .confirmation-section h4 {
-            color: #856404;
-            margin: 0 0 10px 0;
-            font-size: 1em;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 30px 20px;
-                margin: 10px;
-            }
-            
-            .button-group {
-                flex-direction: column;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/account-management.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>
-                <i th:class="${editType == 'username' ? 'fas fa-user' : (editType == 'email' ? 'fas fa-envelope' : 'fas fa-lock')}"></i>
-                <span th:text="${editType == 'username' ? 'ユーザー名編集' : (editType == 'email' ? 'メール編集' : 'パスワード編集')}">編集</span>
-            </h1>
+    <div class="container container-sm">
+        <div class="edit-container">
+            <div class="edit-header">
+                <h1>
+                    <i th:class="${editType == 'username' ? 'fas fa-user' : (editType == 'email' ? 'fas fa-envelope' : 'fas fa-lock')}"></i>
+                    <span th:text="${editType == 'username' ? 'ユーザー名編集' : (editType == 'email' ? 'メール編集' : 'パスワード編集')}">編集</span>
+                </h1>
+            </div>
+
+            <div class="user-info-badge">
+                <strong>編集対象ユーザー:</strong> <span th:text="${targetUser.username}">ユーザー名</span>
+            </div>
+
+            <form th:action="@{'/account/edit/' + ${editType} + '/' + ${targetUser.userId}}" method="post">
+                
+                <!-- ユーザー名編集 -->
+                <div th:if="${editType == 'username'}">
+                    <div class="form-group">
+                        <label class="form-label">現在のユーザー名</label>
+                        <div class="current-value" th:text="${targetUser.username}">現在のユーザー名</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newValue" class="form-label">新しいユーザー名</label>
+                        <input type="text" 
+                               id="newValue" 
+                               name="newValue" 
+                               class="form-control" 
+                               required 
+                               maxlength="50"
+                               placeholder="新しいユーザー名を入力">
+                        <div class="help-text">50文字以内で入力してください</div>
+                    </div>
+                </div>
+
+                <!-- メール編集 -->
+                <div th:if="${editType == 'email'}">
+                    <div class="form-group">
+                        <label class="form-label">現在のメールアドレス</label>
+                        <div class="current-value" th:text="${targetUser.email}">現在のメールアドレス</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newValue" class="form-label">新しいメールアドレス</label>
+                        <input type="email" 
+                               id="newValue" 
+                               name="newValue" 
+                               class="form-control" 
+                               required 
+                               placeholder="新しいメールアドレスを入力">
+                        <div class="help-text">有効なメールアドレス形式で入力してください</div>
+                    </div>
+                </div>
+
+                <!-- パスワード編集 -->
+                <div th:if="${editType == 'password'}">
+                    <div class="confirmation-section">
+                        <h4><i class="fas fa-info-circle"></i> パスワード変更の確認</h4>
+                        <p>セキュリティのため、新しいパスワードを2回入力してください。</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newValue" class="form-label">新しいパスワード</label>
+                        <input type="password" 
+                               id="newValue" 
+                               name="newValue" 
+                               class="form-control" 
+                               required 
+                               minlength="6"
+                               placeholder="新しいパスワードを入力">
+                        <div class="help-text">6文字以上で入力してください</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmValue" class="form-label">パスワード確認</label>
+                        <input type="password" 
+                               id="confirmValue" 
+                               name="confirmValue" 
+                               class="form-control" 
+                               required 
+                               minlength="6"
+                               placeholder="同じパスワードを再入力">
+                        <div class="help-text">上記と同じパスワードを入力してください</div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> 更新
+                    </button>
+                    <a href="/account/search" class="cancel-btn">
+                        <i class="fas fa-times"></i> キャンセル
+                    </a>
+                </div>
+            </form>
         </div>
-
-        <div class="user-info">
-            <strong>編集対象ユーザー:</strong> <span th:text="${targetUser.username}">ユーザー名</span>
-        </div>
-
-        <form th:action="@{'/account/edit/' + ${editType} + '/' + ${targetUser.userId}}" method="post">
-            
-            <!-- ユーザー名編集 -->
-            <div th:if="${editType == 'username'}">
-                <div class="form-group">
-                    <label>現在のユーザー名</label>
-                    <div class="current-value" th:text="${targetUser.username}">現在のユーザー名</div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="newValue">新しいユーザー名</label>
-                    <input type="text" 
-                           id="newValue" 
-                           name="newValue" 
-                           class="form-control" 
-                           required 
-                           maxlength="50"
-                           placeholder="新しいユーザー名を入力">
-                    <div class="help-text">50文字以内で入力してください</div>
-                </div>
-            </div>
-
-            <!-- メール編集 -->
-            <div th:if="${editType == 'email'}">
-                <div class="form-group">
-                    <label>現在のメールアドレス</label>
-                    <div class="current-value" th:text="${targetUser.email}">現在のメールアドレス</div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="newValue">新しいメールアドレス</label>
-                    <input type="email" 
-                           id="newValue" 
-                           name="newValue" 
-                           class="form-control" 
-                           required 
-                           placeholder="新しいメールアドレスを入力">
-                    <div class="help-text">有効なメールアドレス形式で入力してください</div>
-                </div>
-            </div>
-
-            <!-- パスワード編集 -->
-            <div th:if="${editType == 'password'}">
-                <div class="confirmation-section">
-                    <h4><i class="fas fa-info-circle"></i> パスワード変更の確認</h4>
-                    <p>セキュリティのため、新しいパスワードを2回入力してください。</p>
-                </div>
-                
-                <div class="form-group">
-                    <label for="newValue">新しいパスワード</label>
-                    <input type="password" 
-                           id="newValue" 
-                           name="newValue" 
-                           class="form-control" 
-                           required 
-                           minlength="6"
-                           placeholder="新しいパスワードを入力">
-                    <div class="help-text">6文字以上で入力してください</div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="confirmValue">パスワード確認</label>
-                    <input type="password" 
-                           id="confirmValue" 
-                           name="confirmValue" 
-                           class="form-control" 
-                           required 
-                           minlength="6"
-                           placeholder="同じパスワードを再入力">
-                    <div class="help-text">上記と同じパスワードを入力してください</div>
-                </div>
-            </div>
-
-            <div class="button-group">
-                <button type="submit" class="submit-btn">
-                    <i class="fas fa-save"></i> 更新
-                </button>
-                <a href="/account/search" class="cancel-btn">
-                    <i class="fas fa-times"></i> キャンセル
-                </a>
-            </div>
-        </form>
     </div>
 
-    <script th:if="${editType == 'password'}">
-        // パスワード確認の検証
-        document.addEventListener('DOMContentLoaded', function() {
-            const newPassword = document.getElementById('newValue');
-            const confirmPassword = document.getElementById('confirmValue');
-            
-            function validatePasswords() {
-                if (newPassword.value && confirmPassword.value) {
-                    if (newPassword.value !== confirmPassword.value) {
-                        confirmPassword.setCustomValidity('パスワードが一致しません');
-                    } else {
-                        confirmPassword.setCustomValidity('');
-                    }
-                }
-            }
-            
-            newPassword.addEventListener('input', validatePasswords);
-            confirmPassword.addEventListener('input', validatePasswords);
-        });
-    </script>
+    <script src="/js/common.js"></script>
+    <script src="/js/account-edit.js"></script>
 </body>
 </html>

@@ -1,0 +1,495 @@
+/* Sales Weather Analysis Page Styles */
+
+/* Weather Section */
+.weather-section {
+    background: rgba(255, 255, 255, 0.95);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--spacing-md);
+    box-shadow: var(--shadow-md);
+}
+
+.weather-section h2 {
+    color: var(--text-color);
+    margin: 0 0 var(--spacing-md) 0;
+    font-size: var(--font-2xl);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+/* Weather Grid */
+.weather-grid {
+    display: flex;
+    gap: var(--spacing-xs);
+    overflow-x: auto;
+    padding: 5px 0;
+    scroll-behavior: smooth;
+}
+
+.weather-day {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-sm) var(--spacing-xs);
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    min-width: 80px;
+    flex: 1;
+    white-space: nowrap;
+    transition: transform var(--transition-normal);
+}
+
+.weather-day:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.weather-icon {
+    font-size: 2em;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.weather-date {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 4px;
+    font-size: 0.85em;
+}
+
+.weather-temp {
+    color: #ff6b35;
+    font-weight: 600;
+    margin-bottom: 2px;
+    font-size: 0.8em;
+}
+
+.weather-wind {
+    color: var(--text-muted);
+    font-size: 0.7em;
+}
+
+/* Chart Section */
+.chart-section {
+    background: rgba(255, 255, 255, 0.95);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--spacing-md);
+    box-shadow: var(--shadow-md);
+}
+
+.chart-section h2 {
+    color: var(--text-color);
+    margin: 0 0 var(--spacing-md) 0;
+    font-size: var(--font-2xl);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    margin-bottom: var(--spacing-md);
+}
+
+/* Chart Legend */
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    justify-content: center;
+    margin-top: var(--spacing-md);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--font-sm);
+    font-weight: 500;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+/* Bottom Buttons */
+.bottom-buttons {
+    text-align: center;
+    padding: var(--spacing-md);
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.bottom-buttons .btn {
+    margin: 0;
+}
+
+/* Sales History Styles */
+.sales-history-container {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
+}
+
+.sales-history-header {
+    background: var(--secondary-gradient);
+    color: var(--white);
+    text-align: center;
+    padding: var(--spacing-lg);
+    font-size: var(--font-4xl);
+    margin-bottom: 0;
+}
+
+.search-section {
+    background: var(--light-gray);
+    padding: var(--spacing-lg);
+    border-bottom: 2px solid var(--medium-gray);
+}
+
+.search-form {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: end;
+    flex-wrap: wrap;
+}
+
+.search-form .form-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+}
+
+.search-form label {
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+    color: var(--dark-gray);
+}
+
+.search-form input {
+    padding: var(--spacing-sm);
+    border: 2px solid var(--medium-gray);
+    border-radius: var(--radius-md);
+    font-size: var(--font-base);
+    transition: border-color var(--transition-normal);
+}
+
+.search-form input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.search-button {
+    background: var(--primary-gradient);
+    color: var(--white);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--font-base);
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform var(--transition-normal);
+    height: fit-content;
+}
+
+.search-button:hover {
+    transform: translateY(-2px);
+}
+
+/* Results Section */
+.results-section {
+    padding: var(--spacing-lg);
+}
+
+.no-data {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+    font-size: var(--font-xl);
+}
+
+/* Sales Cards */
+.sales-card {
+    background: var(--white);
+    border: 2px solid var(--medium-gray);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+}
+
+.sales-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.sales-header {
+    background: var(--success-gradient);
+    color: var(--white);
+    padding: var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.sales-date {
+    font-size: var(--font-xl);
+    font-weight: 600;
+}
+
+.sales-summary {
+    display: flex;
+    gap: var(--spacing-xl);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.summary-item {
+    text-align: center;
+    background: rgba(255,255,255,0.2);
+    padding: var(--spacing-md) var(--spacing-md);
+    border-radius: var(--radius-lg);
+    min-width: 120px;
+}
+
+.summary-label {
+    font-size: var(--font-sm);
+    opacity: 0.9;
+    margin-bottom: 5px;
+}
+
+.summary-value {
+    font-size: var(--font-xl);
+    font-weight: 600;
+}
+
+/* Link Buttons */
+.link-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: flex-end;
+    margin: var(--spacing-lg) 0 var(--spacing-sm) 0;
+}
+
+.link-button {
+    display: inline-block;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: var(--font-lg);
+    transition: all var(--transition-normal);
+}
+
+.link-button.back {
+    background: var(--secondary-gradient);
+    color: var(--white);
+    box-shadow: 0 2px 8px rgba(255,107,107,0.15);
+}
+
+.link-button.back:hover {
+    background: linear-gradient(45deg, #ff5252, #ffc107);
+    transform: translateY(-2px);
+}
+
+.link-button.history {
+    background: var(--primary-gradient);
+    color: var(--white);
+    box-shadow: 0 2px 8px rgba(102,126,234,0.15);
+}
+
+.link-button.history:hover {
+    background: linear-gradient(45deg, #5561b3, #6f4c91);
+    transform: translateY(-2px);
+}
+
+/* Display Period */
+.display-period {
+    text-align: center;
+    font-size: var(--font-lg);
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .weather-day {
+        min-width: 70px;
+        padding: var(--spacing-sm) var(--spacing-xs);
+    }
+    
+    .weather-icon {
+        font-size: 1.8em;
+    }
+    
+    .weather-temp {
+        font-size: 0.75em;
+    }
+    
+    .weather-wind {
+        font-size: 0.65em;
+    }
+    
+    .chart-container {
+        height: 300px;
+    }
+    
+    .bottom-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .bottom-buttons .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .search-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-form .form-group {
+        min-width: auto;
+    }
+    
+    .sales-summary {
+        gap: var(--spacing-md);
+        justify-content: center;
+    }
+    
+    .summary-item {
+        min-width: 100px;
+    }
+    
+    .link-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .link-button {
+        width: 100%;
+        max-width: 300px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .weather-day {
+        min-width: 60px;
+        padding: var(--spacing-xs) 4px;
+    }
+    
+    .weather-icon {
+        font-size: 1.5em;
+    }
+    
+    .weather-date {
+        font-size: 0.8em;
+    }
+    
+    .weather-temp {
+        font-size: 0.7em;
+    }
+    
+    .weather-wind {
+        font-size: 0.6em;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+    
+    .legend {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .sales-history-header {
+        font-size: var(--font-3xl);
+        padding: var(--spacing-md);
+    }
+    
+    .search-section,
+    .results-section {
+        padding: var(--spacing-md);
+    }
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background: var(--white);
+        color: var(--text-color);
+    }
+    
+    .card-header,
+    .weather-section,
+    .chart-section {
+        background: var(--white);
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    
+    .bottom-buttons {
+        display: none;
+    }
+    
+    .chart-container {
+        height: 300px;
+    }
+    
+    .weather-day {
+        break-inside: avoid;
+    }
+}
+
+/* Accessibility */
+.weather-day:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .card-header {
+        background: #000;
+        color: #fff;
+    }
+    
+    .weather-day {
+        border: 2px solid #000;
+    }
+    
+    .btn-primary {
+        background: #000;
+        color: #fff;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .weather-day,
+    .sales-card,
+    .btn {
+        transition: none;
+    }
+    
+    .weather-day:hover,
+    .sales-card:hover,
+    .btn:hover {
+        transform: none;
+    }
+}
