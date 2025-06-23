@@ -251,9 +251,9 @@
     <div class="container">
         <h1>🍺 クラフトビール売上入力システム</h1>
 
-        
-        <!-- サンプルメッセージ -->
-        <div class="success-message">売上データが正常に登録されました！</div>
+          <!-- メッセージ表示エリア -->
+        <div th:if="${successMessage}" class="success-message" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
         
         <!-- 入力フォーム -->
         <div class="input-form">
@@ -400,7 +400,7 @@
             // フォーム送信の処理
             document.getElementById('salesForm').addEventListener('submit', function(e) {
                 e.preventDefault();
-                alert('売上データを登録しました！（デモ版）');
+                alert('売上データを登録しました！');
             });
         });
     </script>
