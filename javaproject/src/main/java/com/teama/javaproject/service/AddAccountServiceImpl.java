@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 import com.teama.javaproject.repository.UserRepository;
 import com.teama.javaproject.entity.User;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 @Service
 public class AddAccountServiceImpl implements AddAccountService {
 
@@ -23,7 +21,7 @@ public class AddAccountServiceImpl implements AddAccountService {
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
-        user.setPasswordHash(new BCryptPasswordEncoder().encode(password));
+        user.setPasswordHash(password); // ← 平文のまま保存
         user.setRole(role);
 
         userRepository.save(user);
