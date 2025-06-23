@@ -8,6 +8,7 @@
     <h2>販売ID [[${salesId}]] の編集</h2>
     <form th:action="@{/sales/edit}" method="post">
         <input type="hidden" name="salesId" th:value="${salesId}" />
+        <input type="date" name="salesDate" th:value="${selectedDate}" required>
         <table>
             <thead>
                 <tr>

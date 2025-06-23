@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "sales_records")
+@Table(name = "daily_beer_sales") // テーブル名を指定
 @Data
 @NoArgsConstructor
 public class SalesRecord {
@@ -34,13 +34,13 @@ public class SalesRecord {
     @Column(name = "created_at") // 作成日時（システム用）
     private LocalDateTime createdAt;
     
-    public SalesRecord(Integer salesId, Product product, Integer quantity, Integer createBy) {
+    public SalesRecord(Integer salesId, Product product, Integer quantity, Integer createBy, java.time.LocalDate salesDate) {
         this.salesId = salesId;
         this.product = product;
         this.quantity = quantity;
-        this.revenue = product.getUnitPrice() * quantity;
+        this.revenue = (product != null && quantity != null) ? product.getUnitPrice() * quantity : 0;
         this.createBy = createBy;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = (salesDate != null) ? salesDate.atStartOfDay() : LocalDateTime.now();
     }
     
     // 売上金額の再計算メソッド
