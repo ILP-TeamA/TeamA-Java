@@ -40,6 +40,6 @@ public interface SalesRecordRepository extends JpaRepository<SalesRecord, Long> 
     // 販売IDで売上データを一括削除
     void deleteBySalesId(Integer salesId);
 
-    // 指定日の売上レコード取得
-    List<SalesRecord> findByCreatedAtBetweenOrderByProduct_IdAsc(LocalDateTime start, LocalDateTime end);
+    // 指定日の売上レコード取得 ← ここが重要な修正
+    List<SalesRecord> findByCreateAtBetweenOrderByProduct_IdAsc(LocalDateTime start, LocalDateTime end);
 }

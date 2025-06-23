@@ -6,41 +6,43 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "daily_beer_sales") // テーブル名を指定
+@Table(name = "daily_beer_sales")  // ← テーブル名を修正
 @Data
 @NoArgsConstructor
 public class SalesRecord {
-    @Id // 主キー
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "detail_id")
-    private Long detailId;
     
-    @Column(name = "sales_id", nullable = false) // 販売日ID（外部キー）
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "daily_id")  // ← カラム名を修正
+    private Long dailyId;  // ← フィールド名も変更
+    
+    @Column(name = "sales_id", nullable = false)
     private Integer salesId;
     
-    @ManyToOne(fetch = FetchType.LAZY) // 商品との多対一関係
-    @JoinColumn(name = "product_id", nullable = false) // 外部キー制約
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
     
-    @Column(nullable = false) // 販売数量（カップ数）
+    @Column(name = "quantity", nullable = false)
     private Integer quantity;
     
-    @Column(nullable = false) // 売上金額（円）
+    @Column(name = "revenue", nullable = false)
     private Integer revenue;
     
-    @Column(name = "create_by", nullable = false) // 登録者（外部キー）
+    @Column(name = "create_by", nullable = false)
     private Integer createBy;
     
-    @Column(name = "created_at") // 作成日時（システム用）
-    private LocalDateTime createdAt;
+    @Column(name = "create_at")  // ← カラム名を修正
+    private LocalDateTime createAt;  // ← フィールド名も変更
     
-    public SalesRecord(Integer salesId, Product product, Integer quantity, Integer createBy, java.time.LocalDate salesDate) {
+    // コンストラクタ
+    public SalesRecord(Integer salesId, Product product, Integer quantity, Integer createBy) {
         this.salesId = salesId;
         this.product = product;
         this.quantity = quantity;
-        this.revenue = (product != null && quantity != null) ? product.getUnitPrice() * quantity : 0;
+        this.revenue = product.getUnitPrice() * quantity;
         this.createBy = createBy;
-        this.createdAt = (salesDate != null) ? salesDate.atStartOfDay() : LocalDateTime.now();
+        this.createAt = LocalDateTime.now();  // ← 修正
     }
     
     // 売上金額の再計算メソッド
@@ -50,8 +52,9 @@ public class SalesRecord {
         }
     }
     
+    // getter メソッドを手動で定義（Lombokで自動生成されないもの）
     public Long getDetailId() {
-        return detailId;
+        return dailyId;  // ← 互換性のため
     }
     
     public Integer getSalesId() {
@@ -59,16 +62,14 @@ public class SalesRecord {
     }
 
     public Product getProduct() {
-    return product;
+        return product;
     }
 
     public Integer getQuantity() {
-    return quantity;
+        return quantity;
     }
 
     public int getRevenue() {
-    return this.quantity * this.product.getUnitPrice();
+        return this.quantity * this.product.getUnitPrice();
     }
-
-
 }

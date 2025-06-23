@@ -1,697 +1,294 @@
-<!DOCTYPE html> 
-
-<html lang="ja" xmlns:th="http://www.thymeleaf.org"> 
-
-<head> 
-
-    <meta charset="UTF-8"> 
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-
-    <title>売上データ履歴 - クラフトビール売上システム</title> 
-
-    <style> 
-
-        * { 
-
-            margin: 0; 
-
-            padding: 0; 
-
-            box-sizing: border-box; 
-
-        } 
-
- 
-
-        body { 
-
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-
-            min-height: 100vh; 
-
-            padding: 20px; 
-
-            color: #333; 
-
-        } 
-
- 
-
-        .container { 
-
-            max-width: 1200px; 
-
-            margin: 0 auto; 
-
-            background: white; 
-
-            border-radius: 15px; 
-
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
-
-            overflow: hidden; 
-
-        } 
-
- 
-
-        .header { 
-
-            background: linear-gradient(45deg, #667eea, #764ba2); 
-
-            color: white; 
-
-            text-align: center; 
-
-            padding: 30px; 
-
-            font-size: 2.2em; 
-
-            margin-bottom: 0; 
-
-        } 
-
- 
-
-        .search-section { 
-
-            background: #f8f9fa; 
-
-            padding: 25px; 
-
-            border-bottom: 1px solid #e9ecef; 
-
-        } 
-
- 
-
-        .search-form { 
-
-            display: flex; 
-
-            align-items: center; 
-
-            gap: 15px; 
-
-            flex-wrap: wrap; 
-
-            justify-content: center; 
-
-        } 
-
- 
-
-        .search-form label { 
-
-            font-weight: bold; 
-
-            color: #495057; 
-
-            white-space: nowrap; 
-
-        } 
-
- 
-
-        .search-form input[type="date"] { 
-
-            padding: 12px 15px; 
-
-            border: 2px solid #e9ecef; 
-
-            border-radius: 8px; 
-
-            font-size: 16px; 
-
-            transition: border-color 0.3s; 
-
-        } 
-
- 
-
-        .search-form input[type="date"]:focus { 
-
-            outline: none; 
-
-            border-color: #667eea; 
-
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); 
-
-        } 
-
- 
-
-        .search-btn { 
-
-            background: linear-gradient(45deg, #28a745, #20c997); 
-
-            color: white; 
-
-            padding: 12px 25px; 
-
-            border: none; 
-
-            border-radius: 8px; 
-
-            font-size: 16px; 
-
-            font-weight: bold; 
-
-            cursor: pointer; 
-
-            transition: all 0.3s ease; 
-
-        } 
-
- 
-
-        .search-btn:hover { 
-
-            background: linear-gradient(45deg, #218838, #1e7e34); 
-
-            transform: translateY(-2px); 
-
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3); 
-
-        } 
-
- 
-
-        .content-section { 
-
-            padding: 30px; 
-
-        } 
-
- 
-
-        .message { 
-
-            padding: 15px; 
-
-            border-radius: 8px; 
-
-            margin-bottom: 20px; 
-
-            font-weight: bold; 
-
-            text-align: center; 
-
-        } 
-
- 
-
-        .success-message { 
-
-            background: #d4edda; 
-
-            color: #155724; 
-
-            border: 1px solid #c3e6cb; 
-
-        } 
-
- 
-
-        .error-message { 
-
-            background: #f8d7da; 
-
-            color: #721c24; 
-
-            border: 1px solid #f5c6cb; 
-
-        } 
-
- 
-
-        .info-message { 
-
-            background: #d1ecf1; 
-
-            color: #0c5460; 
-
-            border: 1px solid #b6d4da; 
-
-        } 
-
- 
-
-        .results-table { 
-
-            width: 100%; 
-
-            border-collapse: collapse; 
-
-            margin-top: 20px; 
-
-            background: white; 
-
-            border-radius: 10px; 
-
-            overflow: hidden; 
-
-            box-shadow: 0 3px 15px rgba(0,0,0,0.1); 
-
-        } 
-
- 
-
-        .results-table th, 
-
-        .results-table td { 
-
-            padding: 15px; 
-
-            text-align: center; 
-
-            border-bottom: 1px solid #f0f0f0; 
-
-        } 
-
- 
-
-        .results-table th { 
-
-            background: linear-gradient(135deg, #667eea, #764ba2); 
-
-            color: white; 
-
-            font-weight: bold; 
-
-            font-size: 14px; 
-
-        } 
-
- 
-
-        .results-table tr:hover { 
-
-            background-color: #f8f9ff; 
-
-        } 
-
- 
-
-        .results-table tr:last-child td { 
-
-            border-bottom: none; 
-
-        } 
-
- 
-
-        .sales-id { 
-
-            font-weight: bold; 
-
-            color: #667eea; 
-
-        } 
-
- 
-
-        .date-display { 
-
-            color: #495057; 
-
-            font-weight: 500; 
-
-        } 
-
- 
-
-        .amount-display { 
-
-            color: #28a745; 
-
-            font-weight: bold; 
-
-            font-size: 1.1em; 
-
-        } 
-
- 
-
-        .total-row { 
-
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important; 
-
-            font-weight: bold; 
-
-            font-size: 1.1em; 
-
-        } 
-
- 
-
-        .total-row td { 
-
-            color: #495057; 
-
-            border-top: 2px solid #667eea; 
-
-        } 
-
- 
-
-        .back-button { 
-
-            text-align: center; 
-
-            margin-top: 30px; 
-
-            padding-bottom: 20px; 
-
-        } 
-
- 
-
-        .back-btn { 
-
-            background: linear-gradient(45deg, #6c757d, #495057); 
-
-            color: white; 
-
-            padding: 12px 25px; 
-
-            border: none; 
-
-            border-radius: 8px; 
-
-            font-size: 16px; 
-
-            text-decoration: none; 
-
-            display: inline-flex; 
-
-            align-items: center; 
-
-            gap: 8px; 
-
-            transition: all 0.3s ease; 
-
-        } 
-
- 
-
-        .back-btn:hover { 
-
-            background: linear-gradient(45deg, #5a6268, #343a40); 
-
-            transform: translateY(-2px); 
-
-            text-decoration: none; 
-
-            color: white; 
-
-            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3); 
-
-        } 
-
- 
-
-        @media (max-width: 768px) { 
-
-            .search-form { 
-
-                flex-direction: column; 
-
-                align-items: stretch; 
-
-            } 
-
-             
-
-            .search-form input[type="date"] { 
-
-                margin-bottom: 10px; 
-
-            } 
-
-             
-
-            .results-table { 
-
-                font-size: 14px; 
-
-            } 
-
-             
-
-            .results-table th, 
-
-            .results-table td { 
-
-                padding: 10px 8px; 
-
-            } 
-
-        } 
-
- 
-
-        @media (max-width: 600px) { 
-
-            .container { 
-
-                margin: 10px; 
-
-            } 
-
-             
-
-            .header { 
-
-                font-size: 1.8em; 
-
-                padding: 20px; 
-
-            } 
-
-             
-
-            .content-section { 
-
-                padding: 20px; 
-
-            } 
-
-             
-
-            .results-table { 
-
-                font-size: 12px; 
-
-            } 
-
-        } 
-
-    </style> 
-
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"> 
-
-</head> 
-
-<body> 
-
-    <div class="container"> 
-
-        <!-- ヘッダー --> 
-
-        <div class="header"> 
-
-            <i class="fas fa-chart-line"></i> 売上データ履歴 
-
-        </div> 
-
- 
-
-        <!-- 検索セクション --> 
-
-        <div class="search-section"> 
-
-            <form method="get" action="/sales/history" class="search-form"> 
-
-                <label for="selectedDate"> 
-
-                    <i class="fas fa-calendar-alt"></i> 日付を選択： 
-
-                </label> 
-
-                <input type="date"  
-
-                       id="selectedDate"  
-
-                       name="date"  
-
-                       th:value="${searchDate}"  
-
-                       required> 
-
-                <button type="submit" class="search-btn"> 
-
-                    <i class="fas fa-search"></i> 検索 
-
-                </button> 
-
-            </form> 
-
-        </div> 
-
- 
-
-        <!-- メインコンテンツ --> 
-
-        <div class="content-section"> 
-
-            <!-- メッセージ表示 --> 
-
-            <div th:if="${successMessage}" class="message success-message" th:text="${successMessage}"></div> 
-
-            <div th:if="${errorMessage}" class="message error-message" th:text="${errorMessage}"></div> 
-
-            <div th:if="${message}" class="message info-message" th:text="${message}"></div> 
-
- 
-
-            <!-- 検索結果表示 --> 
-
-            <div th:if="${salesHistory != null and !salesHistory.empty}"> 
-
-                <h3 style="color: #495057; margin-bottom: 20px; text-align: center;"> 
-
-                    <i class="fas fa-list"></i>  
-
-                    <span th:if="${searchDate}" th:text="${#temporals.format(#temporals.create(searchDate), 'yyyy年M月d日')}">日付</span> 
-
-                    の売上データ 
-
-                </h3> 
-
-                 
-
-                <table class="results-table"> 
-
-                    <thead> 
-
-                        <tr> 
-
-                            <th><i class="fas fa-hashtag"></i> 売上ID</th> 
-
-                            <th><i class="fas fa-calendar"></i> 日付</th> 
-
-                            <th><i class="fas fa-calendar-week"></i> 曜日</th> 
-
-                            <th><i class="fas fa-users"></i> 顧客数</th> 
-
-                            <th><i class="fas fa-beer"></i> 総本数</th> 
-
-                            <th><i class="fas fa-yen-sign"></i> 総売上額</th> 
-
-                        </tr> 
-
-                    </thead> 
-
-                    <tbody> 
-
-                        <tr th:each="history : ${salesHistory}"> 
-
-                            <td class="sales-id" th:text="${history.sales_id}">1</td> 
-
-                            <td class="date-display" th:text="${history.date}">2025-06-23</td> 
-
-                            <td th:text="${history.day_of_week}">月曜日</td> 
-
-                            <td th:text="${history.customer_count} + '人'">10人</td> 
-
-                            <td th:text="${history.total_cups} + '本'">50本</td> 
-
-                            <td class="amount-display" th:text="'¥' + ${#numbers.formatInteger(history.total_revenue, 0, 'COMMA')}">¥50,000</td> 
-
-                        </tr> 
-
-                    </tbody> 
-
-                </table> 
-
-            </div> 
-
- 
-
-            <!-- データが見つからない場合 --> 
-
-            <div th:if="${salesHistory == null or salesHistory.empty}"> 
-
-                <div class="message info-message"> 
-
-                    <i class="fas fa-info-circle"></i> 
-
-                    <span th:if="${searchDate}"> 
-
-                        <span th:text="${#temporals.format(#temporals.create(searchDate), 'yyyy年M月d日')}">日付</span>の売上データはありません。 
-
-                    </span> 
-
-                    <span th:unless="${searchDate}"> 
-
-                        日付を選択して検索してください。 
-
-                    </span> 
-
-                </div> 
-
-            </div> 
-
- 
-
-            <!-- 戻るボタン --> 
-
-            <div class="back-button"> 
-
-                <a href="/sales" class="back-btn"> 
-
-                    <i class="fas fa-arrow-left"></i> 売上入力に戻る 
-
-                </a> 
-
-            </div> 
-
-        </div> 
-
-    </div> 
-
- 
-
-    <script> 
-
-        document.addEventListener('DOMContentLoaded', function() { 
-
-            // 今日の日付をデフォルトに設定（フィールドが空の場合） 
-
-            const dateInput = document.getElementById('selectedDate'); 
-
-            if (!dateInput.value) { 
-
-                const today = new Date(); 
-
-                const yyyy = today.getFullYear(); 
-
-                const mm = String(today.getMonth() + 1).padStart(2, '0'); 
-
-                const dd = String(today.getDate()).padStart(2, '0'); 
-
-                dateInput.value = `${yyyy}-${mm}-${dd}`; 
-
-            } 
-
-        }); 
-
-    </script> 
-
-</body> 
-
-</html> 
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>売上履歴一覧 - クラフトビール売上システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        h1 {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            font-size: 2.5em;
+            margin-bottom: 0;
+        }
+
+        .search-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 20px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 200px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+
+        .form-group input {
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+            height: fit-content;
+        }
+
+        .search-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .results-section {
+            padding: 30px;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px;
+            color: #6c757d;
+            font-size: 1.2em;
+        }
+
+        .sales-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .sales-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .sales-header {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .sales-date {
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+
+        .sales-summary {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .summary-item {
+            text-align: center;
+            background: rgba(255,255,255,0.2);
+            padding: 15px 20px;
+            border-radius: 10px;
+            min-width: 120px;
+        }
+
+        .summary-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .link-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: flex-end;
+            margin: 30px 0 10px 0;
+        }
+
+        .link-button {
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: background 0.3s;
+        }
+
+        .link-button.back {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            box-shadow: 0 2px 8px rgba(255,107,107,0.15);
+        }
+
+        .link-button.back:hover {
+            background: linear-gradient(45deg, #ff5252, #ffc107);
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .form-group {
+                min-width: auto;
+            }
+
+            .sales-summary {
+                gap: 20px;
+                justify-content: center;
+            }
+
+            .summary-item {
+                min-width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 売上履歴一覧</h1>
+
+        <!-- 検索セクション -->
+        <div class="search-section">
+            <form class="search-form" action="/sales/history" method="get">
+                <div class="form-group">
+                    <label for="searchDate">検索日付:</label>
+                    <input type="date" id="searchDate" name="searchDate" th:value="${searchDate}">
+                </div>
+                <button type="submit" class="search-button">🔍 検索</button>
+                <button type="button" class="search-button" onclick="location.href='/sales/history'">📋 全履歴表示</button>
+            </form>
+        </div>
+
+        <!-- 結果表示セクション -->
+        <div class="results-section">
+            <!-- エラーメッセージ -->
+            <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
+
+            <!-- データなしメッセージ -->
+            <div th:if="${salesHistory == null or #lists.isEmpty(salesHistory)}" class="no-data">
+                <span th:if="${searchDate}">
+                    📅 <span th:text="${searchDate}"></span> のデータが見つかりませんでした
+                </span>
+                <span th:unless="${searchDate}">
+                    📊 売上データがまだ登録されていません
+                </span>
+            </div>
+
+            <!-- 売上データ表示 -->
+            <div th:each="sales : ${salesHistory}" class="sales-card">
+                <div class="sales-header">
+                    <div class="sales-date">
+                        📅 <span th:text="${sales.date}"></span>
+                        (<span th:text="${sales.day_of_week}"></span>)
+                    </div>
+                    
+                    <div class="sales-summary">
+                        <div class="summary-item">
+                            <div class="summary-label">総販売数</div>
+                            <div class="summary-value"><span th:text="${sales.total_cups}"></span> 本</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">総売上</div>
+                            <div class="summary-value">¥<span th:text="${#numbers.formatInteger(sales.total_revenue, 0, 'COMMA')}"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 戻るボタン -->
+        <div class="link-buttons">
+            <a href="/sales" class="link-button back">売上入力画面へ戻る</a>
+        </div>
+    </div>
+
+    <script>
+        // 今日の日付をデフォルトで設定
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchDateInput = document.getElementById('searchDate');
+            if (!searchDateInput.value) {
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                searchDateInput.value = `${yyyy}-${mm}-${dd}`;
+            }
+        });
+    </script>
+</body>
+</html>
