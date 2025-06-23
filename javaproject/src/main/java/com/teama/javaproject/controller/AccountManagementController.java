@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.List;
 
 import java.util.Optional;
 
@@ -24,17 +25,17 @@ public class AccountManagementController {
     @GetMapping("/management")
     public String showAccountManagement(HttpSession session, Model model) {
         User user = (User) session.getAttribute("loginUser");
-        
+
         // ログインチェック
         if (user == null) {
             return "redirect:/login";
         }
-        
+
         // 管理者権限チェック
         if (!"admin".equals(user.getRole())) {
             return "redirect:/home";
         }
-        
+
         model.addAttribute("username", user.getUsername());
         return "account-management-menu";
     }
@@ -45,12 +46,12 @@ public class AccountManagementController {
     @GetMapping("/create")
     public String showCreateAccount(HttpSession session, Model model) {
         User user = (User) session.getAttribute("loginUser");
-        
+
         // ログインチェック & 管理者権限チェック
         if (user == null || !"admin".equals(user.getRole())) {
             return "redirect:/login";
         }
-        
+
         return "account-create";
     }
 
@@ -59,34 +60,34 @@ public class AccountManagementController {
      */
     @PostMapping("/create")
     public String createAccount(@RequestParam String username,
-                              @RequestParam String email,
-                              @RequestParam String password,
-                              @RequestParam String role,
-                              RedirectAttributes redirectAttributes,
-                              HttpSession session) {
-        
+            @RequestParam String email,
+            @RequestParam String password,
+            @RequestParam String role,
+            RedirectAttributes redirectAttributes,
+            HttpSession session) {
+
         User user = (User) session.getAttribute("loginUser");
-        
+
         // ログインチェック & 管理者権限チェック
         if (user == null || !"admin".equals(user.getRole())) {
             return "redirect:/login";
         }
-        
+
         try {
             boolean result = accountManagementService.createAccount(username, email, password, role);
-            
+
             if (result) {
-                redirectAttributes.addFlashAttribute("successMessage", 
-                    "アカウント「" + username + "」を正常に作成しました");
+                redirectAttributes.addFlashAttribute("successMessage",
+                        "アカウント「" + username + "」を正常に作成しました");
             } else {
-                redirectAttributes.addFlashAttribute("errorMessage", 
-                    "このメールアドレスは既に使用されています");
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "このメールアドレスは既に使用されています");
             }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", 
-                "アカウント作成中にエラーが発生しました: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "アカウント作成中にエラーが発生しました: " + e.getMessage());
         }
-        
+
         return "redirect:/account/create";
     }
 
@@ -96,12 +97,16 @@ public class AccountManagementController {
     @GetMapping("/search")
     public String showSearchAccount(HttpSession session, Model model) {
         User user = (User) session.getAttribute("loginUser");
-        
+
         // ログインチェック & 管理者権限チェック
         if (user == null || !"admin".equals(user.getRole())) {
             return "redirect:/login";
         }
-        
+
+        // 全アカウント一覧を取得して表示
+        List<User> allUsers = accountManagementService.getAllUsers();
+        model.addAttribute("allUsers", allUsers);
+
         return "account-search";
     }
 
@@ -110,19 +115,19 @@ public class AccountManagementController {
      */
     @PostMapping("/search")
     public String searchAccount(@RequestParam String searchEmail,
-                              Model model,
-                              HttpSession session) {
-        
+            Model model,
+            HttpSession session) {
+
         User user = (User) session.getAttribute("loginUser");
-        
+
         // ログインチェック & 管理者権限チェック
         if (user == null || !"admin".equals(user.getRole())) {
             return "redirect:/login";
         }
-        
+
         try {
             Optional<User> foundUser = accountManagementService.findUserByEmail(searchEmail);
-            
+
             if (foundUser.isPresent()) {
                 model.addAttribute("foundUser", foundUser.get());
                 model.addAttribute("searchEmail", searchEmail);
@@ -133,7 +138,7 @@ public class AccountManagementController {
         } catch (Exception e) {
             model.addAttribute("errorMessage", "検索中にエラーが発生しました: " + e.getMessage());
         }
-        
+
         return "account-search";
     }
 
@@ -143,11 +148,11 @@ public class AccountManagementController {
     @GetMapping("/edit/username/{userId}")
     public String showEditUsername(@PathVariable Long userId, HttpSession session, Model model) {
         User user = (User) session.getAttribute("loginUser");
-        
+
         if (user == null || !"admin".equals(user.getRole())) {
             return "redirect:/login";
         }
-        
+
         Optional<User> targetUser = accountManagementService.findUserById(userId);
         if (targetUser.isPresent()) {
             model.addAttribute("targetUser", targetUser.get());
@@ -164,11 +169,11 @@ public class AccountManagementController {
     @GetMapping("/edit/email/{userId}")
     public String showEditEmail(@PathVariable Long userId, HttpSession session, Model model) {
         User user = (User) session.getAttribute("loginUser");
-        
+
         if (user == null || !"admin".equals(user.getRole())) {
             return "redirect:/login";
         }
-        
+
         Optional<User> targetUser = accountManagementService.findUserById(userId);
         if (targetUser.isPresent()) {
             model.addAttribute("targetUser", targetUser.get());
@@ -185,11 +190,11 @@ public class AccountManagementController {
     @GetMapping("/edit/password/{userId}")
     public String showEditPassword(@PathVariable Long userId, HttpSession session, Model model) {
         User user = (User) session.getAttribute("loginUser");
-        
+
         if (user == null || !"admin".equals(user.getRole())) {
             return "redirect:/login";
         }
-        
+
         Optional<User> targetUser = accountManagementService.findUserById(userId);
         if (targetUser.isPresent()) {
             model.addAttribute("targetUser", targetUser.get());
@@ -205,34 +210,34 @@ public class AccountManagementController {
      */
     @PostMapping("/edit/{editType}/{userId}")
     public String updateField(@PathVariable String editType,
-                            @PathVariable Long userId,
-                            @RequestParam String newValue,
-                            @RequestParam(required = false) String confirmValue,
-                            HttpSession session,
-                            RedirectAttributes redirectAttributes) {
-        
+            @PathVariable Long userId,
+            @RequestParam String newValue,
+            @RequestParam(required = false) String confirmValue,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
         User user = (User) session.getAttribute("loginUser");
-        
+
         if (user == null || !"admin".equals(user.getRole())) {
             return "redirect:/login";
         }
-        
+
         try {
             boolean result = accountManagementService.updateUserField(userId, editType, newValue, confirmValue);
-            
+
             if (result) {
                 String fieldName = getFieldDisplayName(editType);
-                redirectAttributes.addFlashAttribute("successMessage", 
-                    fieldName + "を正常に更新しました");
+                redirectAttributes.addFlashAttribute("successMessage",
+                        fieldName + "を正常に更新しました");
             } else {
-                redirectAttributes.addFlashAttribute("errorMessage", 
-                    "更新に失敗しました。入力内容を確認してください");
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "更新に失敗しました。入力内容を確認してください");
             }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", 
-                "更新中にエラーが発生しました: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "更新中にエラーが発生しました: " + e.getMessage());
         }
-        
+
         return "redirect:/account/search";
     }
 
@@ -241,30 +246,30 @@ public class AccountManagementController {
      */
     @PostMapping("/delete/{userId}")
     public String deleteAccount(@PathVariable Long userId,
-                              HttpSession session,
-                              RedirectAttributes redirectAttributes) {
-        
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
         User user = (User) session.getAttribute("loginUser");
-        
+
         if (user == null || !"admin".equals(user.getRole())) {
             return "redirect:/login";
         }
-        
+
         try {
             boolean result = accountManagementService.deleteUser(userId);
-            
+
             if (result) {
-                redirectAttributes.addFlashAttribute("successMessage", 
-                    "アカウントを正常に削除しました");
+                redirectAttributes.addFlashAttribute("successMessage",
+                        "アカウントを正常に削除しました");
             } else {
-                redirectAttributes.addFlashAttribute("errorMessage", 
-                    "アカウントの削除に失敗しました");
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "アカウントの削除に失敗しました");
             }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", 
-                "削除中にエラーが発生しました: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "削除中にエラーが発生しました: " + e.getMessage());
         }
-        
+
         return "redirect:/account/search";
     }
 
@@ -273,10 +278,14 @@ public class AccountManagementController {
      */
     private String getFieldDisplayName(String editType) {
         switch (editType) {
-            case "username": return "ユーザー名";
-            case "email": return "メールアドレス";
-            case "password": return "パスワード";
-            default: return "項目";
+            case "username":
+                return "ユーザー名";
+            case "email":
+                return "メールアドレス";
+            case "password":
+                return "パスワード";
+            default:
+                return "項目";
         }
     }
 }
