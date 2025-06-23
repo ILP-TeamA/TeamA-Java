@@ -1,908 +1,144 @@
- 
 
-<!DOCTYPE html> 
-
-<html lang="ja"> 
-
-<head> 
-
-    <meta charset="UTF-8"> 
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-
-    <title>クラフトビール売上入力システム</title> 
-
-    <style> 
-
-        * { 
-
-            margin: 0; 
-
-            padding: 0; 
-
-            box-sizing: border-box; 
-
-        } 
-
- 
-
-        body { 
-
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-
-            min-height: 100vh; 
-
-            padding: 20px; 
-
-            color: #333; 
-
-        } 
-
- 
-
-        .container { 
-
-            max-width: 1200px; 
-
-            margin: 0 auto; 
-
-            background: white; 
-
-            border-radius: 15px; 
-
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
-
-            overflow: hidden; 
-
-        } 
-
- 
-
-        h1 { 
-
-            background: linear-gradient(45deg, #ff6b6b, #feca57); 
-
-            color: white; 
-
-            text-align: center; 
-
-            padding: 30px; 
-
-            font-size: 2.5em; 
-
-            margin-bottom: 0; 
-
-        } 
-
- 
-
-        .success-message { 
-
-            background: #d4edda; 
-
-            color: #155724; 
-
-            padding: 15px; 
-
-            margin: 20px; 
-
-            border-radius: 8px; 
-
-            border-left: 4px solid #28a745; 
-
-        } 
-
- 
-
-        .error-message { 
-
-            background: #f8d7da; 
-
-            color: #721c24; 
-
-            padding: 15px; 
-
-            margin: 20px; 
-
-            border-radius: 8px; 
-
-            border-left: 4px solid #dc3545; 
-
-        } 
-
- 
-
-        .input-form { 
-
-            padding: 30px; 
-
-            background: #f8f9fa; 
-
-        } 
-
- 
-
-        .input-form h3 { 
-
-            color: #495057; 
-
-            margin-bottom: 25px; 
-
-            font-size: 1.5em; 
-
-        } 
-
- 
-
-        .form-row { 
-
-            display: flex; 
-
-            gap: 20px; 
-
-            margin-bottom: 30px; 
-
-            align-items: end; 
-
-            flex-wrap: wrap; 
-
-        } 
-
- 
-
-        .form-group { 
-
-            display: flex; 
-
-            flex-direction: column; 
-
-            min-width: 150px; 
-
-        } 
-
- 
-
-        .form-group label { 
-
-            font-weight: bold; 
-
-            margin-bottom: 8px; 
-
-            color: #495057; 
-
-        } 
-
- 
-
-        .form-group input { 
-
-            padding: 12px; 
-
-            border: 2px solid #e9ecef; 
-
-            border-radius: 8px; 
-
-            font-size: 16px; 
-
-            transition: border-color 0.3s; 
-
-        } 
-
- 
-
-        .form-group input:focus { 
-
-            outline: none; 
-
-            border-color: #667eea; 
-
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); 
-
-        } 
-
- 
-
-        .products-grid { 
-
-            display: grid; 
-
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-
-            gap: 20px; 
-
-            margin-bottom: 30px; 
-
-        } 
-
- 
-
-        .product-card { 
-
-            background: white; 
-
-            border-radius: 12px; 
-
-            padding: 20px; 
-
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-
-            transition: transform 0.3s, box-shadow 0.3s; 
-
-        } 
-
- 
-
-        .product-card:hover { 
-
-            transform: translateY(-5px); 
-
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15); 
-
-        } 
-
- 
-
-        .product-header { 
-
-            display: flex; 
-
-            justify-content: space-between; 
-
-            align-items: center; 
-
-            margin-bottom: 15px; 
-
-            padding-bottom: 10px; 
-
-            border-bottom: 2px solid #f8f9fa; 
-
-        } 
-
- 
-
-        .product-name { 
-
-            font-weight: bold; 
-
-            font-size: 1.1em; 
-
-            color: #495057; 
-
-        } 
-
- 
-
-        .product-price { 
-
-            background: linear-gradient(45deg, #667eea, #764ba2); 
-
-            color: white; 
-
-            padding: 5px 12px; 
-
-            border-radius: 20px; 
-
-            font-weight: bold; 
-
-        } 
-
- 
-
-        .input-group { 
-
-            display: flex; 
-
-            align-items: center; 
-
-            margin-bottom: 10px; 
-
-        } 
-
- 
-
-        .input-group label { 
-
-            min-width: 80px; 
-
-            font-weight: 500; 
-
-            color: #6c757d; 
-
-        } 
-
- 
-
-        .quantity-input { 
-
-            width: 80px; 
-
-            padding: 8px; 
-
-            border: 2px solid #e9ecef; 
-
-            border-radius: 6px; 
-
-            text-align: center; 
-
-            font-size: 16px; 
-
-            margin: 0 8px; 
-
-            transition: border-color 0.3s; 
-
-        } 
-
- 
-
-        .quantity-input:focus { 
-
-            outline: none; 
-
-            border-color: #667eea; 
-
-        } 
-
- 
-
-        .unit { 
-
-            color: #6c757d; 
-
-            font-weight: 500; 
-
-        } 
-
- 
-
-        .product-revenue { 
-
-            background: #e3f2fd; 
-
-            padding: 8px 12px; 
-
-            border-radius: 6px; 
-
-            font-weight: bold; 
-
-            color: #1976d2; 
-
-            text-align: center; 
-
-        } 
-
- 
-
-        .total-revenue-preview { 
-
-            background: linear-gradient(45deg, #28a745, #20c997); 
-
-            color: white; 
-
-            padding: 20px; 
-
-            border-radius: 10px; 
-
-            text-align: center; 
-
-            font-size: 1.3em; 
-
-            font-weight: bold; 
-
-            margin-bottom: 30px; 
-
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3); 
-
-        } 
-
- 
-
-        .submit-button { 
-
-            width: 100%; 
-
-            background: linear-gradient(45deg, #ff6b6b, #feca57); 
-
-            color: white; 
-
-            padding: 15px 30px; 
-
-            border: none; 
-
-            border-radius: 10px; 
-
-            font-size: 1.2em; 
-
-            font-weight: bold; 
-
-            cursor: pointer; 
-
-            transition: transform 0.3s, box-shadow 0.3s; 
-
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3); 
-
-        } 
-
- 
-
-        .submit-button:hover { 
-
-            transform: translateY(-2px); 
-
-            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4); 
-
-        } 
-
- 
-
-        .link-buttons { 
-
-            display: flex; 
-
-            gap: 20px; 
-
-            justify-content: flex-end; 
-
-            margin: 30px 0 10px 0; 
-
-        } 
-
- 
-
-        .link-button { 
-
-            display: inline-block; 
-
-            padding: 12px 28px; 
-
-            border-radius: 8px; 
-
-            text-decoration: none; 
-
-            font-weight: bold; 
-
-            font-size: 1.1em; 
-
-            transition: background 0.3s; 
-
-        } 
-
- 
-
-        .link-button.history { 
-
-            background: linear-gradient(45deg, #667eea, #764ba2); 
-
-            color: white; 
-
-            box-shadow: 0 2px 8px rgba(102,126,234,0.15); 
-
-        } 
-
- 
-
-        .link-button.history:hover { 
-
-            background: linear-gradient(45deg, #5561b3, #6f4c91); 
-
-        } 
-
- 
-
-        @media (max-width: 768px) { 
-
-            .form-row { 
-
-                flex-direction: column; 
-
-                align-items: stretch; 
-
-            } 
-
-             
-
-            .form-group { 
-
-                min-width: auto; 
-
-            } 
-
-        } 
-
-    </style> 
-
-</head> 
-
-<body> 
-
-    <div class="container"> 
-
-        <h1>🍺 クラフトビール売上入力システム</h1> 
-
- 
-
-        <!-- メッセージ表示エリア --> 
-
-        <div th:if="${successMessage}" class="success-message" th:text="${successMessage}"></div> 
-
-        <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div> 
-
-         
-
-        <!-- 入力フォーム --> 
-
-        <div class="input-form"> 
-
-            <h3>📅 売上データ入力</h3> 
-
-            <form action="/sales/register" method="post" id="salesForm"> 
-                 <input type="hidden" name="salesId" value="1"><!--追加-->
-
-                <div class="form-row"> 
-
-                    <div class="form-group"> 
-
-                        <label for="salesDate">販売日付:</label> 
-
-                        <input type="date" id="salesDate" name="salesDate" required> 
-
-                    </div> 
-
-                    <div class="form-group"> 
-
-                        <label for="createBy">登録者ID:</label> 
-
-                        <input type="number" id="createBy" name="createBy" min="1" value="1" required> 
-
-                    </div> 
-
-                </div> 
-
-                 
-
-                <div class="products-grid" id="productsGrid"> 
-
-                    <div class="product-card"> 
-
-                        <div class="product-header"> 
-
-                            <span class="product-name">ホワイトビール</span> 
-
-                            <span class="product-price">¥900</span> 
-
-                        </div> 
-
-                        <div class="input-group"> 
-
-                            <label for="product_1">売上本数:</label> 
-
-                            <input type="number" id="product_1" name="product_1" data-price="900" min="0" max="999" value="0" class="quantity-input"> 
-
-                            <span class="unit">本</span> 
-
-                        </div> 
-
-                        <div class="product-revenue" id="revenue_product_1"> 
-
-                            売上額: ¥0 
-
-                        </div> 
-
-                    </div> 
-
- 
-
-                    <div class="product-card"> 
-
-                        <div class="product-header"> 
-
-                            <span class="product-name">ラガー</span> 
-
-                            <span class="product-price">¥800</span> 
-
-                        </div> 
-
-                        <div class="input-group"> 
-
-                            <label for="product_2">売上本数:</label> 
-
-                            <input type="number" id="product_2" name="product_2" data-price="800" min="0" max="999" value="0" class="quantity-input"> 
-
-                            <span class="unit">本</span> 
-
-                        </div> 
-
-                        <div class="product-revenue" id="revenue_product_2"> 
-
-                            売上額: ¥0 
-
-                        </div> 
-
-                    </div> 
-
- 
-
-                    <div class="product-card"> 
-
-                        <div class="product-header"> 
-
-                            <span class="product-name">ペールエール</span> 
-
-                            <span class="product-price">¥1,000</span> 
-
-                        </div> 
-
-                        <div class="input-group"> 
-
-                            <label for="product_3">売上本数:</label> 
-
-                            <input type="number" id="product_3" name="product_3" data-price="1000" min="0" max="999" value="0" class="quantity-input"> 
-
-                            <span class="unit">本</span> 
-
-                        </div> 
-
-                        <div class="product-revenue" id="revenue_product_3"> 
-
-                            売上額: ¥0 
-
-                        </div> 
-
-                    </div> 
-
- 
-
-                    <div class="product-card"> 
-
-                        <div class="product-header"> 
-
-                            <span class="product-name">フルーツビール</span> 
-
-                            <span class="product-price">¥1,000</span> 
-
-                        </div> 
-
-                        <div class="input-group"> 
-
-                            <label for="product_4">売上本数:</label> 
-
-                            <input type="number" id="product_4" name="product_4" data-price="1000" min="0" max="999" value="0" class="quantity-input"> 
-
-                            <span class="unit">本</span> 
-
-                        </div> 
-
-                        <div class="product-revenue" id="revenue_product_4"> 
-
-                            売上額: ¥0 
-
-                        </div> 
-
-                    </div> 
-
- 
-
-                    <div class="product-card"> 
-
-                        <div class="product-header"> 
-
-                            <span class="product-name">黒ビール</span> 
-
-                            <span class="product-price">¥1,200</span> 
-
-                        </div> 
-
-                        <div class="input-group"> 
-
-                            <label for="product_5">売上本数:</label> 
-
-                            <input type="number" id="product_5" name="product_5" data-price="1200" min="0" max="999" value="0" class="quantity-input"> 
-
-                            <span class="unit">本</span> 
-
-                        </div> 
-
-                        <div class="product-revenue" id="revenue_product_5"> 
-
-                            売上額: ¥0 
-
-                        </div> 
-
-                    </div> 
-
- 
-
-                    <div class="product-card"> 
-
-                        <div class="product-header"> 
-
-                            <span class="product-name">IPA</span> 
-
-                            <span class="product-price">¥900</span> 
-
-                        </div> 
-
-                        <div class="input-group"> 
-
-                            <label for="product_6">売上本数:</label> 
-
-                            <input type="number" id="product_6" name="product_6" data-price="900" min="0" max="999" value="0" class="quantity-input"> 
-
-                            <span class="unit">本</span> 
-
-                        </div> 
-
-                        <div class="product-revenue" id="revenue_product_6"> 
-
-                            売上額: ¥0 
-
-                        </div> 
-
-                    </div> 
-
-                </div> 
-
-                 
-
-                <div class="total-revenue-preview" id="totalRevenuePreview"> 
-
-                    本日の予想売上総額: ¥0 
-
-                </div> 
-
-                 
-
-                <button type="submit" class="submit-button">売上データを登録</button> 
-
-            </form> 
-
-        </div> 
-
-         
-
-        <!-- 売上履歴ページへのリンクボタン --> 
-
-        <div class="link-buttons"> 
-
-            <a href="/sales/history" class="link-button history">売上履歴一覧へ</a> 
-
-        </div> 
-
-    </div> 
-
-         
-
-    <script> 
-
-        document.addEventListener('DOMContentLoaded', function() { 
-
-            // 今日の日付をデフォルトで設定 
-
-            const today = new Date(); 
-
-            const yyyy = today.getFullYear(); 
-
-            const mm = String(today.getMonth() + 1).padStart(2, '0'); 
-
-            const dd = String(today.getDate()).padStart(2, '0'); 
-
-            document.getElementById('salesDate').value = `${yyyy}-${mm}-${dd}`; 
-
- 
-
-            const inputs = document.querySelectorAll('.quantity-input'); 
-
-             
-
-            inputs.forEach(input => { 
-
-                input.addEventListener('input', updateRevenue); 
-
-            }); 
-
-             
-
-            function updateRevenue() { 
-
-                let totalRevenue = 0; 
-
-                 
-
-                inputs.forEach(input => { 
-
-                    const price = parseInt(input.dataset.price); 
-
-                    const quantity = parseInt(input.value) || 0; 
-
-                    const revenue = price * quantity; 
-
-                     
-
-                    const revenueElement = document.getElementById('revenue_' + input.id); 
-
-                    if (revenueElement) { 
-
-                        revenueElement.textContent = '売上額: ¥' + revenue.toLocaleString(); 
-
-                    } 
-
-                     
-
-                    totalRevenue += revenue; 
-
-                }); 
-
-                 
-
-                document.getElementById('totalRevenuePreview').textContent = 
-
-                    '本日の売上総額: ¥' + totalRevenue.toLocaleString(); 
-
-            } 
-
- 
-
-            // フォーム送信の処理（バリデーションのみ） 
-
-            document.getElementById('salesForm').addEventListener('submit', function(e) { 
-
-                const createBy = document.getElementById('createBy').value; 
-
-                const salesDate = document.getElementById('salesDate').value; 
-
-                 
-
-                if (!createBy || !salesDate) { 
-
-                    e.preventDefault(); 
-
-                    alert('販売日付と登録者IDをすべて入力してください。'); 
-
-                    return; 
-
-                } 
-
- 
-
-                // 数量が1つも入力されていない場合の確認 
-
-                let hasQuantity = false; 
-
-                inputs.forEach(input => { 
-
-                    if (parseInt(input.value) > 0) { 
-
-                        hasQuantity = true; 
-
-                    } 
-
-                }); 
-
- 
-
-                if (!hasQuantity) { 
-
-                    e.preventDefault(); 
-
-                    alert('少なくとも1つの商品の販売数量を入力してください。'); 
-
-                    return; 
-
-                } 
-
- 
-
-                // バリデーション通過時はフォームを通常通り送信 
-
-                console.log('フォーム送信中...'); 
-
-            }); 
-
-        }); 
-
-    </script> 
-
-</body> 
-
-</html> 
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>クラフトビール売上入力</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/sales-input.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sales-container">
+            <h1 class="sales-header">🍺 クラフトビール売上入力システム</h1>
+
+            <!-- メッセージ表示エリア -->
+            <div th:if="${successMessage}" class="message message-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="message message-error" th:text="${errorMessage}"></div>
+            
+            <!-- 入力フォーム -->
+            <div class="input-form">
+                <h3>📅 売上データ入力</h3>
+                <form action="/sales/register" method="post" id="salesForm">
+                    <input type="hidden" name="salesId" value="1">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="salesDate" class="form-label">販売日付:</label>
+                            <input type="date" id="salesDate" name="salesDate" class="form-control" required>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="products-grid" id="productsGrid">
+                        <div class="product-card">
+                            <div class="product-header">
+                                <span class="product-name">ホワイトビール</span>
+                                <span class="product-price">¥900</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="product_1">売上本数:</label>
+                                <input type="number" id="product_1" name="product_1" data-price="900" min="0" max="999" value="0" class="quantity-input">
+                                <span class="unit">本</span>
+                            </div>
+                            <div class="product-revenue" id="revenue_product_1">
+                                売上額: ¥0
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <div class="product-header">
+                                <span class="product-name">ラガー</span>
+                                <span class="product-price">¥800</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="product_2">売上本数:</label>
+                                <input type="number" id="product_2" name="product_2" data-price="800" min="0" max="999" value="0" class="quantity-input">
+                                <span class="unit">本</span>
+                            </div>
+                            <div class="product-revenue" id="revenue_product_2">
+                                売上額: ¥0
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <div class="product-header">
+                                <span class="product-name">ペールエール</span>
+                                <span class="product-price">¥1,000</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="product_3">売上本数:</label>
+                                <input type="number" id="product_3" name="product_3" data-price="1000" min="0" max="999" value="0" class="quantity-input">
+                                <span class="unit">本</span>
+                            </div>
+                            <div class="product-revenue" id="revenue_product_3">
+                                売上額: ¥0
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <div class="product-header">
+                                <span class="product-name">フルーツビール</span>
+                                <span class="product-price">¥1,000</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="product_4">売上本数:</label>
+                                <input type="number" id="product_4" name="product_4" data-price="1000" min="0" max="999" value="0" class="quantity-input">
+                                <span class="unit">本</span>
+                            </div>
+                            <div class="product-revenue" id="revenue_product_4">
+                                売上額: ¥0
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <div class="product-header">
+                                <span class="product-name">黒ビール</span>
+                                <span class="product-price">¥1,200</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="product_5">売上本数:</label>
+                                <input type="number" id="product_5" name="product_5" data-price="1200" min="0" max="999" value="0" class="quantity-input">
+                                <span class="unit">本</span>
+                            </div>
+                            <div class="product-revenue" id="revenue_product_5">
+                                売上額: ¥0
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <div class="product-header">
+                                <span class="product-name">IPA</span>
+                                <span class="product-price">¥900</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="product_6">売上本数:</label>
+                                <input type="number" id="product_6" name="product_6" data-price="900" min="0" max="999" value="0" class="quantity-input">
+                                <span class="unit">本</span>
+                            </div>
+                            <div class="product-revenue" id="revenue_product_6">
+                                売上額: ¥0
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="total-revenue-preview" id="totalRevenuePreview">
+                        本日の予想売上総額: ¥0
+                    </div>
+                    
+                    <button type="submit" class="submit-button">売上データを登録</button>
+                </form>
+            </div>
+            
+            <!-- 売上履歴ページへのリンクボタン -->
+            <div class="link-buttons">
+                <a href="/sales/history" class="link-button history">売上履歴一覧へ</a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/common.js"></script>
+    <script src="/js/sales-input.js"></script>
+</body>
+</html>

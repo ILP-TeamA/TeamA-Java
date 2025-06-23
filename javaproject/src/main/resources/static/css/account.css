@@ -1,0 +1,295 @@
+/* Account Management Page Styles */
+
+/* Search container */
+.search-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
+}
+
+.search-container h2 {
+    color: var(--text-color);
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-2xl);
+    text-align: center;
+}
+
+/* Search form */
+.search-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.search-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.search-input-group label {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: var(--font-base);
+}
+
+.search-input-group input {
+    padding: var(--spacing-md);
+    border: 2px solid var(--medium-gray);
+    border-radius: var(--radius-md);
+    font-size: var(--font-base);
+    transition: border-color var(--transition-normal);
+}
+
+.search-input-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.search-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    margin-top: var(--spacing-md);
+}
+
+/* Search results */
+.search-results {
+    margin-top: var(--spacing-lg);
+}
+
+.search-results-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-xl);
+}
+
+.search-results-container h3 {
+    color: var(--text-color);
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-xl);
+    text-align: center;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.result-card {
+    background: var(--white);
+    border: 1px solid var(--light-gray);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.result-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.result-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.result-header i {
+    font-size: var(--font-xl);
+    color: var(--primary-color);
+}
+
+.username {
+    font-weight: 600;
+    font-size: var(--font-lg);
+    color: var(--text-color);
+    flex-grow: 1;
+}
+
+.result-details p {
+    margin: var(--spacing-sm) 0;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.result-details i {
+    width: 16px;
+    color: var(--primary-color);
+}
+
+.no-results {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+}
+
+.loading {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    text-align: center;
+    margin: var(--spacing-md) 0;
+}
+
+/* Account list section */
+.account-list-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-xl);
+    margin-top: var(--spacing-lg);
+}
+
+.account-list-section h3 {
+    color: var(--text-color);
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-2xl);
+    text-align: center;
+}
+
+.account-list-section .table {
+    margin-bottom: 0;
+}
+
+.account-list-section .table th {
+    background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+    color: var(--text-color);
+    font-weight: 600;
+    border: none;
+    padding: var(--spacing-md);
+}
+
+.account-list-section .table td {
+    padding: var(--spacing-md);
+    vertical-align: middle;
+    border-top: 1px solid var(--light-gray);
+}
+
+.role-badge {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-md);
+    font-size: var(--font-sm);
+    font-weight: 600;
+}
+
+.role-admin {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.role-employee {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    justify-content: center;
+}
+
+.btn-sm {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-sm);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+}
+
+.btn-edit {
+    background: var(--warning-gradient);
+    color: var(--white);
+}
+
+.btn-edit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(255, 193, 7, 0.3);
+    text-decoration: none;
+    color: var(--white);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+/* Table responsive */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.table th,
+.table td {
+    text-align: left;
+}
+
+.table tr:hover {
+    background-color: rgba(102, 126, 234, 0.05);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .search-buttons {
+        flex-direction: column;
+    }
+    
+    .results-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .result-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+    
+    .account-list-section {
+        padding: var(--spacing-md);
+    }
+    
+    .table th,
+    .table td {
+        padding: var(--spacing-sm);
+        font-size: var(--font-sm);
+    }
+    
+    .actions {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+}
