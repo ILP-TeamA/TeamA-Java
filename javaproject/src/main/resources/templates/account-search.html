@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -14,7 +14,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -230,6 +230,103 @@
             text-align: center;
         }
 
+        /* アカウント一覧のスタイル */
+        .account-list-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .account-list-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .table th,
+        .table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table th {
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .table tr:hover {
+            background-color: rgba(102, 126, 234, 0.05);
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .role-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .role-admin {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .role-employee {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8em;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: linear-gradient(45deg, #ffc107, #ff8c00);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(255, 193, 7, 0.3);
+            text-decoration: none;
+            color: white;
+        }
+
         @media (max-width: 768px) {
             .search-form {
                 flex-direction: column;
@@ -244,6 +341,19 @@
             
             .info-value {
                 margin: 0;
+            }
+            
+            .table {
+                font-size: 0.9em;
+            }
+            
+            .table th,
+            .table td {
+                padding: 10px 8px;
+            }
+            
+            .actions {
+                flex-direction: column;
             }
         }
     </style>
@@ -340,6 +450,55 @@
                     <i class="fas fa-trash"></i> アカウントを削除
                 </button>
             </div>
+        </div>
+
+        <!-- アカウント一覧セクション -->
+        <div class="account-list-section" th:if="${allUsers}">
+            <h3><i class="fas fa-users"></i> 登録済みアカウント一覧</h3>
+            
+            <div th:if="${#lists.isEmpty(allUsers)}" class="text-center">
+                <p style="color: #666; font-style: italic;">登録されているアカウントがありません。</p>
+            </div>
+            
+            <table class="table" th:unless="${#lists.isEmpty(allUsers)}">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-user"></i> ユーザー名</th>
+                        <th><i class="fas fa-envelope"></i> メールアドレス</th>
+                        <th><i class="fas fa-user-tag"></i> 役割</th>
+                        <th><i class="fas fa-cogs"></i> 操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${allUsers}">
+                        <td th:text="${user.username}">ユーザー名</td>
+                        <td th:text="${user.email}">メールアドレス</td>
+                        <td>
+                            <span th:class="${user.role == 'admin' ? 'role-badge role-admin' : 'role-badge role-employee'}"
+                                  th:text="${user.role == 'admin' ? '管理者' : '従業員'}">役割</span>
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{'/account/edit/username/' + ${user.userId}}" 
+                                   class="btn-sm btn-edit" 
+                                   title="ユーザー名編集">
+                                    <i class="fas fa-user-edit"></i>
+                                </a>
+                                <a th:href="@{'/account/edit/email/' + ${user.userId}}" 
+                                   class="btn-sm btn-edit" 
+                                   title="メール編集">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                                <a th:href="@{'/account/edit/password/' + ${user.userId}}" 
+                                   class="btn-sm btn-edit" 
+                                   title="パスワード編集">
+                                    <i class="fas fa-key"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <div class="text-center">
