@@ -4,6 +4,7 @@ import com.teama.javaproject.entity.WeatherHistory;
 import com.teama.javaproject.repository.DailyBeerSalesRepository;
 import com.teama.javaproject.repository.WeatherHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,6 +19,9 @@ public class SalesWeatherService {
     
     @Autowired
     private WeatherHistoryRepository weatherRepository;
+    
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
     
     /**
      * 一週間分の天気データを取得
@@ -45,46 +49,63 @@ public class SalesWeatherService {
     }
 
     /**
-     * 一週間分の販売実績データを取得
+     * 一週間分の販売実績データを取得（修正版）
      */
     public Map<String, List<Integer>> getWeeklySalesData(LocalDate startDate) {
         System.out.println("=== 販売データ検索 ===");
         System.out.println("販売データ基準日: " + startDate);
         
-        // 日付から sales_id を計算（2024年4月1日 = sales_id 1 と仮定）
-        LocalDate baseDate = LocalDate.of(2024, 4, 1);
-        long daysDiff = java.time.temporal.ChronoUnit.DAYS.between(baseDate, startDate);
-        int startSalesId = Math.max(1, (int) daysDiff + 1);
-        int endSalesId = startSalesId + 6;
+        LocalDate endDate = startDate.plusDays(6);
         
-        System.out.println("計算された sales_id 範囲: " + startSalesId + " ～ " + endSalesId);
+        // 日付範囲で直接SQLクエリを実行
+        String sql = """
+            SELECT 
+                dbs.sales_id,
+                summary.date,
+                p.name as product_name,
+                COALESCE(dbs.quantity, 0) as quantity
+            FROM daily_beer_summary summary
+            LEFT JOIN daily_beer_sales dbs ON summary.sales_id = dbs.sales_id
+            LEFT JOIN products p ON dbs.product_id = p.id
+            WHERE summary.date BETWEEN ? AND ?
+            ORDER BY summary.date, p.id
+            """;
         
-        // データベースから販売データを取得
-        List<Object[]> salesData = salesRepository.findDailySalesDataByProductAndSalesIdRange(startSalesId, endSalesId);
+        List<Map<String, Object>> salesData = jdbcTemplate.queryForList(sql, startDate, endDate);
         
         System.out.println("取得した販売データ件数: " + salesData.size());
         
         // データを整理（商品名 -> 日別販売数量のマップ）
         Map<String, List<Integer>> chartData = new HashMap<>();
         
-        // 商品名の初期化
+        // 商品名の初期化（7日分のデータを0で初期化）
         String[] productNames = {"ホワイトビール", "ラガー", "ペールエール", "フルーツビール", "黒ビール", "IPA"};
         for (String productName : productNames) {
             chartData.put(productName, new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0)));
         }
         
         // 実際のデータをマップに設定
-        for (Object[] row : salesData) {
-            Integer salesId = (Integer) row[0];
-            String productName = (String) row[1];
-            Long quantity = (Long) row[2];
+        for (Map<String, Object> row : salesData) {
+            LocalDate salesDate = ((java.sql.Date) row.get("date")).toLocalDate();
+            String productName = (String) row.get("product_name");
+            Integer quantity = (Integer) row.get("quantity");
             
-            int dayIndex = salesId - startSalesId;
-            if (dayIndex >= 0 && dayIndex < 7 && chartData.containsKey(productName)) {
-                chartData.get(productName).set(dayIndex, quantity.intValue());
-                System.out.println("販売データ設定: " + productName + 
-                                 " - Day" + dayIndex + " - " + quantity + "本");
+            if (productName != null && quantity != null) {
+                // 開始日からの日数を計算
+                int dayIndex = (int) java.time.temporal.ChronoUnit.DAYS.between(startDate, salesDate);
+                
+                if (dayIndex >= 0 && dayIndex < 7 && chartData.containsKey(productName)) {
+                    chartData.get(productName).set(dayIndex, quantity);
+                    System.out.println("販売データ設定: " + productName + 
+                                     " - " + salesDate + " (Day" + dayIndex + ") - " + quantity + "本");
+                }
             }
+        }
+        
+        // デバッグ：最終的なチャートデータを出力
+        System.out.println("=== 最終チャートデータ ===");
+        for (Map.Entry<String, List<Integer>> entry : chartData.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
         }
         
         return chartData;
