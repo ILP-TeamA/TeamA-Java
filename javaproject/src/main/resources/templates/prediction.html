@@ -1,55 +1,84 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>発注量予測／発注 - クラフトビール発注システム</title>
-    <link rel="stylesheet" href="/css/common.css">
-    <link rel="stylesheet" href="/css/prediction.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>発注量予測／発注 - クラフトビール発注システム</title>
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/prediction.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<!-- 日付制限機能のスタイル -->
+<style>
+        .date-restriction-note {
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        .date-input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: 1px solid #f5c6cb;
+            margin-top: 10px;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- ヘッダー -->
-        <div class="header">
-            <h1><i class="fas fa-chart-line"></i> 発注量予測／発注</h1>
-            <p>AIによる需要予測で最適な発注量を提案します</p>
-        </div>
-
+<div class="container">
+<!-- ヘッダー -->
+<div class="header">
+<h1><i class="fas fa-chart-line"></i> 発注量予測</h1>
+<p>AIによる需要予測で最適な発注量を提案します</p>
+</div>
+ 
         <!-- 日付選択セクション -->
-        <div class="date-selector">
-            <div class="date-input-group">
-                <label for="prediction-date">
-                    <i class="fas fa-calendar-alt"></i> 予測日を選択:
-                </label>
-                <input type="date" id="prediction-date" class="date-input" />
-                <button type="button" class="btn btn-primary" onclick="runPrediction()">
-                    <i class="fas fa-brain"></i> 予測する
-                </button>
-            </div>
-        </div>
-
+<div class="date-selector">
+<div class="date-input-group">
+<label for="prediction-date">
+<i class="fas fa-calendar-alt"></i> 予測日を選択:
+</label>
+<input type="date" id="prediction-date" class="date-input" />
+<button type="button" class="btn btn-primary" onclick="runPrediction()">
+<i class="fas fa-brain"></i> 予測する
+</button>
+<div class="date-restriction-note">※月曜日・木曜日のみ選択可能</div>
+<div id="error-message" class="error-message">
+<i class="fas fa-exclamation-triangle"></i> 発注日ではないため、予測できません
+</div>
+</div>
+</div>
+ 
         <!-- 予測結果セクション -->
-        <div class="prediction-section" th:if="${predictions}">
-            <h2>
-                <i class="fas fa-chart-bar"></i> 予測結果
-            </h2>
-            
-            <form action="/prediction/confirmation" method="post">
-                <table class="prediction-table">
-                    <thead>
-                        <tr>
-                            <th><i class="fas fa-beer"></i> 商品名</th>
-                            <th><i class="fas fa-calculator"></i> 予測数量</th>
-                            <th><i class="fas fa-edit"></i> 発注本数入力</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="p, stat : ${predictions}">
-                            <td class="product-name" th:text="${p.product.name}">ホワイトビール</td>
-                            <td class="predicted-quantity" th:text="${p.predictedQuantity} + '本'">150本</td>
-                            <td>
-                                <input type="number" 
+<div class="prediction-section" th:if="${predictions}">
+<h2>
+<i class="fas fa-chart-bar"></i> 予測結果
+</h2>
+<form action="/prediction/confirmation" method="post">
+<table class="prediction-table">
+<thead>
+<tr>
+<th><i class="fas fa-beer"></i> 商品名</th>
+<th><i class="fas fa-calculator"></i> 予測数量</th>
+<th><i class="fas fa-edit"></i> 発注本数入力</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="p, stat : ${predictions}">
+<td class="product-name" th:text="${p.product.name}">ホワイトビール</td>
+<td class="predicted-quantity" th:text="${p.predictedQuantity} + '本'">150本</td>
+<td>
+<input type="number" 
                                        th:name="|quantities[${stat.index}]|" 
                                        class="quantity-input"
                                        th:value="${p.predictedQuantity}"
@@ -57,39 +86,127 @@
                                        required 
                                        min="0"
                                        step="1">
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
+</td>
+</tr>
+</tbody>
+</table>
+ 
                 <!-- 予測日 hidden -->
-                <input type="hidden" name="date" th:value="${predictionDate}" />
-
+<input type="hidden" name="date" th:value="${predictionDate}" />
+ 
                 <div class="button-section">
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-check-circle"></i> 確認一覧へ
-                    </button>
-                </div>
-            </form>
-        </div>
-
+<button type="submit" class="btn btn-success">
+<i class="fas fa-check-circle"></i> 確認一覧へ
+</button>
+</div>
+</form>
+</div>
+ 
         <!-- 予測結果がない場合のメッセージ -->
-        <div class="prediction-section no-predictions" th:unless="${predictions}">
-            <h2>
-                <i class="fas fa-info-circle"></i> 予測を開始してください
-            </h2>
-            <p>上記の日付選択で予測日を選んで「予測する」ボタンを押してください。</p>
-        </div>
-
+<div class="prediction-section no-predictions" th:unless="${predictions}">
+<h2>
+<i class="fas fa-info-circle"></i> 予測を開始してください
+</h2>
+<p>上記の日付選択で予測日を選んで「予測する」ボタンを押してください。</p>
+</div>
+ 
         <!-- ボタンセクション -->
-        <div class="button-section">
-            <a href="/sales-weather-analysis" class="btn btn-secondary">
-                <i class="fas fa-chart-area"></i> 実績分析へ戻る
-            </a>
-        </div>
-    </div>
-
+<div class="button-section">
+<a href="/home" class="btn btn-secondary">
+<i class="fas fa-home"></i> ホームへ
+</a>
+<a href="/sales-weather-analysis" class="btn btn-secondary">
+<i class="fas fa-chart-area"></i> 実績分析へ戻る
+</a>
+</div>
+</div>
+ 
     <script src="/js/common.js"></script>
-    <script src="/js/prediction.js"></script>
+<script src="/js/prediction.js"></script>
+<!-- 修正された日付制限機能のスクリプト -->
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.getElementById('prediction-date');
+            const errorMessage = document.getElementById('error-message');
+ 
+            if (dateInput && errorMessage) {
+                // エラーメッセージを非表示にする関数
+                function hideErrorMessage() {
+                    errorMessage.classList.remove('show');
+                }
+ 
+                // エラーメッセージを表示する関数
+                function showErrorMessage() {
+                    errorMessage.classList.add('show');
+                }
+ 
+                // 日付の妥当性をチェックする関数
+                function checkDateValidity(dateValue) {
+                    if (!dateValue) {
+                        hideErrorMessage();
+                        return true;
+                    }
+ 
+                    const selectedDate = new Date(dateValue);
+                    const dayOfWeek = selectedDate.getDay(); // 0=日曜, 1=月曜, 2=火曜, ..., 6=土曜
+ 
+                    // 月曜日(1)と木曜日(4)のみ有効
+                    if (dayOfWeek === 1 || dayOfWeek === 4) {
+                        hideErrorMessage();
+                        return true;
+                    } else {
+                        showErrorMessage();
+                        return false;
+                    }
+                }
+ 
+                // 日付が変更されたときの検証
+                dateInput.addEventListener('change', function(e) {
+                    checkDateValidity(e.target.value);
+                });
+ 
+                // キーボード入力による日付変更も監視
+                dateInput.addEventListener('input', function(e) {
+                    // 完全な日付が入力された場合のみチェック
+                    if (e.target.value && e.target.value.length === 10) {
+                        const selectedDate = new Date(e.target.value);
+                        if (!isNaN(selectedDate.getTime())) {
+                            checkDateValidity(e.target.value);
+                        }
+                    } else if (!e.target.value) {
+                        hideErrorMessage();
+                    }
+                });
+ 
+                // ページ読み込み時に既存の値をチェック
+                if (dateInput.value) {
+                    checkDateValidity(dateInput.value);
+                }
+            }
+        });
+ 
+        // 修正された予測実行関数
+        function runPrediction() {
+            const dateInput = document.getElementById('prediction-date');
+            const selectedDate = dateInput.value;
+ 
+            if (!selectedDate) {
+                alert('予測日を選択してください。');
+                return;
+            }
+ 
+            // 日付の妥当性を再確認
+            const date = new Date(selectedDate);
+            const dayOfWeek = date.getDay();
+            if (dayOfWeek !== 1 && dayOfWeek !== 4) {
+                alert('発注日ではないため、予測できません。月曜日または木曜日を選択してください。');
+                return;
+            }
+ 
+            // 予測実行のためのページ遷移
+            // GETパラメータを使用してコントローラーに送信
+            window.location.href = `/prediction?predictionDate=${selectedDate}`;
+        }
+</script>
 </body>
 </html>
