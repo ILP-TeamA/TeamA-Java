@@ -22,14 +22,19 @@
             <div class="input-form">
                 <h3>📅 売上データ入力</h3>
                 <form action="/sales/register" method="post" id="salesForm">
-                    <input type="hidden" name="salesId" value="1">
+                    <input type="hidden" name="createBy" id="createBy" value="1">
 
                     <div class="form-row">
                         <div class="form-group">
                             <label for="salesDate" class="form-label">販売日付:</label>
-                            <input type="date" id="salesDate" name="salesDate" class="form-control" required>
+                            <!-- デフォルト値をサーバーサイドで設定 -->
+                            <input type="date" 
+                                   id="salesDate" 
+                                   name="salesDate" 
+                                   class="form-control" 
+                                   th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                                   required>
                         </div>
-
                     </div>
 
                     <div class="products-grid" id="productsGrid">
