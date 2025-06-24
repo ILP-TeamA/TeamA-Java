@@ -52,6 +52,7 @@
                                 <input type="number" 
                                        th:name="|quantities[${stat.index}]|" 
                                        class="quantity-input"
+                                       th:value="${p.predictedQuantity}"
                                        placeholder="本数入力" 
                                        required 
                                        min="0"
