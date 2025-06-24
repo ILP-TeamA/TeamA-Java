@@ -83,16 +83,23 @@ public class SalesWeatherController {
             // Chart.js用のラベルを生成
             List<String> chartLabels = salesWeatherService.generateChartLabels(startDate);
             
-            // Chart.js用のデータセットを生成
+            // Chart.js用のデータセットを生成（JSON文字列として）
             String chartDatasets = salesWeatherService.generateChartDatasets(salesData);
             
             // 表示期間を生成
             String displayPeriod = salesWeatherService.generateDisplayPeriod(startDate);
             
+            // デバッグログ
+            System.out.println("=== 画面データ設定 ===");
+            System.out.println("期間: " + displayPeriod);
+            System.out.println("ラベル: " + chartLabels);
+            System.out.println("販売データ: " + salesData);
+            System.out.println("Chart.jsデータセット: " + chartDatasets);
+            
             // モデルに属性を設定
             model.addAttribute("weatherData", weatherData);
             model.addAttribute("chartLabels", chartLabels);
-            model.addAttribute("chartData", chartDatasets);
+            model.addAttribute("chartData", chartDatasets); // JSON文字列をそのまま渡す
             model.addAttribute("displayPeriod", displayPeriod);
             model.addAttribute("selectedDate", startDate.toString());
             
@@ -115,6 +122,8 @@ public class SalesWeatherController {
             
             // エラー時のデフォルトデータ設定
             setDefaultModelAttributes(model, startDate);
+            
+            e.printStackTrace();
         }
         
         return "sales-weather-analysis";
