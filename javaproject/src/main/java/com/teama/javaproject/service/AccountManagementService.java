@@ -3,6 +3,7 @@ package com.teama.javaproject.service;
 import com.teama.javaproject.entity.User;
 import com.teama.javaproject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,9 @@ public class AccountManagementService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * アカウント作成
@@ -29,7 +33,8 @@ public class AccountManagementService {
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
-        user.setPasswordHash(password); // ← 平文のまま保存
+        // パスワードをハッシュ化して保存
+        user.setPasswordHash(passwordEncoder.encode(password));
         user.setRole(role);
 
         userRepository.save(user);
@@ -101,7 +106,8 @@ public class AccountManagementService {
                     return false;
                 }
                 
-                user.setPasswordHash(newValue); // ← 平文のまま保存
+                // パスワードをハッシュ化して保存
+                user.setPasswordHash(passwordEncoder.encode(newValue));
                 break;
                 
             default:
