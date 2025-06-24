@@ -383,7 +383,7 @@
             <a href="/prediction" class="btn btn-primary">
                 <i class="fas fa-box"></i> 発注量予測へ
             </a>
-            <form method="post" action="/logout" style="display: inline;">
+            <form method="post" action="/logout" style="display: inline;" onsubmit="return confirmLogout()">
                 <button type="submit" class="btn btn-secondary">
                     <i class="fas fa-sign-out-alt"></i> ログアウト
                 </button>
@@ -391,137 +391,21 @@
         </div>
     </div>
 
-    <!-- Chart.js スクリプト -->
-    <script>
-        const ctx = document.getElementById('salesChart').getContext('2d');
+    <!-- データ設定用スクリプト -->
+    <script th:inline="javascript">
+        // サーバーサイドのデータをJavaScript変数に設定
+        window.salesWeatherData = {
+            chartLabels: /*[[${chartLabels}]]*/ null,
+            chartData: /*[[${chartData}]]*/ null
+        };
         
-        // データが存在する場合はサーバーサイドのデータを使用、ない場合はサンプルデータを使用
-        const chartLabels = /*[[${chartLabels}]]*/ ['6/2', '6/3', '6/4', '6/5', '6/6', '6/7', '6/8'];
-        const chartData = /*[[${chartData}]]*/ [
-            {
-                label: 'ホワイトビール',
-                data: [120, 150, 180, 200, 170, 160, 190],
-                borderColor: '#FF6B6B',
-                backgroundColor: '#FF6B6B',
-                fill: false,
-                tension: 0.1
-            },
-            {
-                label: 'ラガー',
-                data: [100, 130, 160, 180, 150, 140, 170],
-                borderColor: '#4ECDC4',
-                backgroundColor: '#4ECDC4',
-                fill: false,
-                tension: 0.1
-            },
-            {
-                label: 'ペールエール',
-                data: [80, 110, 140, 160, 130, 120, 150],
-                borderColor: '#45B7D1',
-                backgroundColor: '#45B7D1',
-                fill: false,
-                tension: 0.1
-            },
-            {
-                label: 'フルーツビール',
-                data: [60, 90, 120, 140, 110, 100, 130],
-                borderColor: '#96CEB4',
-                backgroundColor: '#96CEB4',
-                fill: false,
-                tension: 0.1
-            },
-            {
-                label: '黒ビール',
-                data: [40, 70, 100, 120, 90, 80, 110],
-                borderColor: '#FFEAA7',
-                backgroundColor: '#FFEAA7',
-                fill: false,
-                tension: 0.1
-            },
-            {
-                label: 'IPA',
-                data: [90, 120, 150, 170, 140, 130, 160],
-                borderColor: '#DDA0DD',
-                backgroundColor: '#DDA0DD',
-                fill: false,
-                tension: 0.1
-            }
-        ];
-        
-        const salesChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: chartLabels,
-                datasets: chartData
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: '日別ビール販売実績',
-                        font: {
-                            size: 16
-                        }
-                    },
-                    legend: {
-                        display: false // カスタム凡例を使用
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 500,
-                        title: {
-                            display: true,
-                            text: '販売本数'
-                        },
-                        grid: {
-                            color: '#e0e0e0'
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: '日付'
-                        },
-                        grid: {
-                            color: '#e0e0e0'
-                        }
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                },
-                elements: {
-                    point: {
-                        radius: 4,
-                        hoverRadius: 6
-                    },
-                    line: {
-                        borderWidth: 2
-                    }
-                }
-            }
-        });
+        console.log('サーバーデータ設定完了:', window.salesWeatherData);
     </script>
 
-    <!-- 日付制限スクリプト -->
-    <script>
-        // 未来の日付を選択できないように制限
-        document.addEventListener('DOMContentLoaded', function() {
-            const dateInput = document.getElementById('selectedDate');
-            if (dateInput) {
-                const today = new Date();
-                const yyyy = today.getFullYear();
-                const mm = String(today.getMonth() + 1).padStart(2, '0');
-                const dd = String(today.getDate()).padStart(2, '0');
-                const maxDate = `${yyyy}-${mm}-${dd}`;
-                dateInput.setAttribute('max', maxDate);
-            }
-        });
-    </script>
+    <!-- 共通JavaScript -->
+    <script src="/js/common.js"></script>
+    
+    <!-- 専用JavaScript -->
+    <script src="/js/sales-weather-analysis.js"></script>
 </body>
 </html>
