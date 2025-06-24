@@ -169,7 +169,7 @@
 .link-button.history {
     background: var(--primary-gradient);
     color: var(--white);
-    box-shadow: 0 2px 8px rgba(102,126,234,0.15);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
 }
 
 .link-button.history:hover {
@@ -184,24 +184,59 @@
     .products-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .link-buttons {
         flex-direction: column;
         align-items: center;
     }
-    
+
     .link-button {
         width: 100%;
         max-width: 300px;
         text-align: center;
     }
-    
+
     .sales-header {
         font-size: var(--font-3xl);
         padding: var(--spacing-md);
     }
-    
+
     .input-form {
         padding: var(--spacing-md);
     }
+
+    .link-button.home {
+        background: var(--primary-gradient);
+        color: var(--white);
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+    }
+
+    .link-button.home:hover {
+        background: linear-gradient(45deg, #5561b3, #6f4c91);
+        transform: translateY(-2px);
+        text-decoration: none;
+        color: var(--white);
+    }
+
+    .link-button.logout {
+        background: var(--danger-gradient);
+        color: var(--white);
+        border: none;
+        padding: var(--spacing-sm) var(--spacing-lg);
+        border-radius: var(--radius-md);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: var(--font-lg);
+        cursor: pointer;
+        transition: all var(--transition-normal);
+        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.15);
+    }
+
+    .link-button.logout:hover {
+        background: linear-gradient(45deg, #c82333, #bd2130);
+        transform: translateY(-2px);
+        text-decoration: none;
+        color: var(--white);
+    }
+
 }
