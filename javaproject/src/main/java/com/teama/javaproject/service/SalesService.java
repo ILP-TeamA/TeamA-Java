@@ -247,6 +247,44 @@ public class SalesService {
     }
 
     /**
+     * 指定日付の売上データを取得（編集用）
+     */
+    public List<Map<String, Object>> getSalesDataByDate(LocalDate date) {
+        try {
+            // 日付から sales_id を計算
+            LocalDate baseDate = LocalDate.of(2024, 4, 1);
+            long daysDiff = java.time.temporal.ChronoUnit.DAYS.between(baseDate, date);
+            int targetSalesId = Math.max(1, (int) daysDiff + 1);
+
+            System.out.println("日付別売上データ取得: " + date + ", sales_id: " + targetSalesId);
+
+            // 該当するsales_idの商品別売上データを取得
+            String sql = """
+                    SELECT
+                        dbs.product_id,
+                        p.name as product_name,
+                        p.unit_price,
+                        dbs.quantity,
+                        dbs.revenue
+                    FROM daily_beer_sales dbs
+                    JOIN products p ON dbs.product_id = p.id
+                    WHERE dbs.sales_id = ?
+                    ORDER BY dbs.product_id
+                    """;
+
+            List<Map<String, Object>> results = jdbcTemplate.queryForList(sql, targetSalesId);
+            System.out.println("取得した売上データ件数: " + results.size());
+
+            return results;
+
+        } catch (Exception e) {
+            System.err.println("日付別売上データ取得エラー: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
      * 指定されたsales_idの商品別売上詳細を取得
      */
     public List<Map<String, Object>> getProductDetailsBySalesId(Integer salesId) {

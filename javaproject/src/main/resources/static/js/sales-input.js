@@ -1,13 +1,9 @@
 // Sales Input JavaScript
 
 document.addEventListener('DOMContentLoaded', function() {
-    // 今日の日付をデフォルトで設定
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    document.getElementById('salesDate').value = `${yyyy}-${mm}-${dd}`;
-
+    // 今日の日付をデフォルトで設定（修正版）
+    setTodayAsDefault();
+    
     const inputs = document.querySelectorAll('.quantity-input');
     
     inputs.forEach(input => {
@@ -36,12 +32,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // フォーム送信の処理（バリデーションのみ）
     document.getElementById('salesForm').addEventListener('submit', function(e) {
-        const createBy = document.getElementById('createBy').value;
+        const createBy = document.getElementById('createBy')?.value;
         const salesDate = document.getElementById('salesDate').value;
         
-        if (!createBy || !salesDate) {
+        if (!salesDate) {
             e.preventDefault();
-            alert('販売日付と登録者IDをすべて入力してください。');
+            alert('販売日付を入力してください。');
             return;
         }
 
@@ -63,3 +59,20 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('フォーム送信中...');
     });
 });
+
+/**
+ * 今日の日付をデフォルトで設定する関数
+ */
+function setTodayAsDefault() {
+    const salesDateInput = document.getElementById('salesDate');
+    if (salesDateInput && !salesDateInput.value) {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const todayString = `${year}-${month}-${day}`;
+        
+        salesDateInput.value = todayString;
+        console.log('デフォルト日付設定:', todayString);
+    }
+}

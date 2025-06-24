@@ -1,35 +1,201 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>売上データ編集</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>売上データ編集 - クラフトビール売上システム</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/sales-input.css">
 </head>
 <body>
-    <h2>販売ID [[${salesId}]] の編集</h2>
-    <form th:action="@{/sales/edit}" method="post">
-        <input type="hidden" name="salesId" th:value="${salesId}" />
-        <input type="date" name="salesDate" th:value="${selectedDate}" required>
-        <table>
-            <thead>
-                <tr>
-                    <th>商品名</th>
-                    <th>販売数</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="product : ${products}">
-                    <td th:text="${product.name}"></td>
-                    <td>
-                        <input type="number"
-                               min="0"
-                               th:name="'product_' + ${product.id}"
-                               th:value="${salesMap[product.id] != null ? salesMap[product.id] : 0}" />
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <input type="hidden" name="createBy" value="1" />
-        <button type="submit">更新</button>
-    </form>
+    <div class="container">
+        <div class="sales-container">
+            <h1 class="sales-header">✏️ 売上データ編集</h1>
+
+            <!-- メッセージ表示エリア -->
+            <div th:if="${successMessage}" class="message message-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="message message-error" th:text="${errorMessage}"></div>
+
+            <!-- 編集フォーム -->
+            <div class="input-form">
+                <h3>📅 売上データ編集 - <span th:text="${salesDate}">2024-06-24</span></h3>
+                <form action="/sales/register" method="post" id="salesForm">
+                    <input type="hidden" name="createBy" value="1">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="salesDate" class="form-label">販売日付:</label>
+                            <input type="date" 
+                                   id="salesDate" 
+                                   name="salesDate" 
+                                   class="form-control" 
+                                   th:value="${salesDate}"
+                                   readonly>
+                        </div>
+                    </div>
+
+                    <div class="products-grid" id="productsGrid">
+                        <div class="product-card">
+                            <div class="product-header">
+                                <span class="product-name">ホワイトビール</span>
+                                <span class="product-price">¥900</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="product_1">売上本数:</label>
+                                <input type="number" 
+                                       id="product_1" 
+                                       name="product_1" 
+                                       data-price="900" 
+                                       min="0" 
+                                       max="999"
+                                       th:value="${existingData != null && existingData.size() > 0 ? existingData[0].quantity : 0}"
+                                       class="quantity-input">
+                                <span class="unit">本</span>
+                            </div>
+                            <div class="product-revenue" id="revenue_product_1">
+                                売上額: ¥0
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <div class="product-header">
+                                <span class="product-name">ラガー</span>
+                                <span class="product-price">¥800</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="product_2">売上本数:</label>
+                                <input type="number" 
+                                       id="product_2" 
+                                       name="product_2" 
+                                       data-price="800" 
+                                       min="0" 
+                                       max="999"
+                                       th:value="${existingData != null && existingData.size() > 1 ? existingData[1].quantity : 0}"
+                                       class="quantity-input">
+                                <span class="unit">本</span>
+                            </div>
+                            <div class="product-revenue" id="revenue_product_2">
+                                売上額: ¥0
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <div class="product-header">
+                                <span class="product-name">ペールエール</span>
+                                <span class="product-price">¥1,000</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="product_3">売上本数:</label>
+                                <input type="number" 
+                                       id="product_3" 
+                                       name="product_3" 
+                                       data-price="1000" 
+                                       min="0" 
+                                       max="999"
+                                       th:value="${existingData != null && existingData.size() > 2 ? existingData[2].quantity : 0}"
+                                       class="quantity-input">
+                                <span class="unit">本</span>
+                            </div>
+                            <div class="product-revenue" id="revenue_product_3">
+                                売上額: ¥0
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <div class="product-header">
+                                <span class="product-name">フルーツビール</span>
+                                <span class="product-price">¥1,000</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="product_4">売上本数:</label>
+                                <input type="number" 
+                                       id="product_4" 
+                                       name="product_4" 
+                                       data-price="1000" 
+                                       min="0" 
+                                       max="999"
+                                       th:value="${existingData != null && existingData.size() > 3 ? existingData[3].quantity : 0}"
+                                       class="quantity-input">
+                                <span class="unit">本</span>
+                            </div>
+                            <div class="product-revenue" id="revenue_product_4">
+                                売上額: ¥0
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <div class="product-header">
+                                <span class="product-name">黒ビール</span>
+                                <span class="product-price">¥1,200</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="product_5">売上本数:</label>
+                                <input type="number" 
+                                       id="product_5" 
+                                       name="product_5" 
+                                       data-price="1200" 
+                                       min="0" 
+                                       max="999"
+                                       th:value="${existingData != null && existingData.size() > 4 ? existingData[4].quantity : 0}"
+                                       class="quantity-input">
+                                <span class="unit">本</span>
+                            </div>
+                            <div class="product-revenue" id="revenue_product_5">
+                                売上額: ¥0
+                            </div>
+                        </div>
+
+                        <div class="product-card">
+                            <div class="product-header">
+                                <span class="product-name">IPA</span>
+                                <span class="product-price">¥900</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="product_6">売上本数:</label>
+                                <input type="number" 
+                                       id="product_6" 
+                                       name="product_6" 
+                                       data-price="900" 
+                                       min="0" 
+                                       max="999"
+                                       th:value="${existingData != null && existingData.size() > 5 ? existingData[5].quantity : 0}"
+                                       class="quantity-input">
+                                <span class="unit">本</span>
+                            </div>
+                            <div class="product-revenue" id="revenue_product_6">
+                                売上額: ¥0
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="total-revenue-preview" id="totalRevenuePreview">
+                        売上総額: ¥0
+                    </div>
+
+                    <button type="submit" class="submit-button">売上データを更新</button>
+                </form>
+            </div>
+
+            <!-- ナビゲーションボタン -->
+            <div class="link-buttons">
+                <a href="/sales" class="link-button home">売上入力画面へ戻る</a>
+                <a href="/sales/history" class="link-button history">売上履歴一覧へ</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/common.js"></script>
+    <script src="/js/sales-input.js"></script>
+    <script>
+        // ページ読み込み時に売上金額を計算
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.quantity-input');
+            inputs.forEach(input => {
+                if (input.value && parseInt(input.value) > 0) {
+                    input.dispatchEvent(new Event('input'));
+                }
+            });
+        });
+    </script>
 </body>
 </html>

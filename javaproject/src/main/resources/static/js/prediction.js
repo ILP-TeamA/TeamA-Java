@@ -248,6 +248,28 @@ function visualizePredictionData() {
                 quantityCell.style.color = '#2e7d32';
             }
         }
+        
+        // 🔥 重要な修正：予測値を入力フィールドにデフォルト設定
+        const quantityInput = row.querySelector('.quantity-input');
+        const predictedQuantity = row.querySelector('.predicted-quantity');
+        
+        if (quantityInput && predictedQuantity) {
+            // 予測数量のテキストから数値を抽出（"17本" → 17）
+            const predictedValue = parseInt(predictedQuantity.textContent.replace(/[^\d]/g, ''));
+            
+            if (!isNaN(predictedValue)) {
+                // 入力フィールドに予測値を設定
+                quantityInput.value = predictedValue;
+                
+                // 視覚的フィードバック
+                quantityInput.style.backgroundColor = '#e3f2fd';
+                setTimeout(() => {
+                    quantityInput.style.backgroundColor = '';
+                }, 1000);
+                
+                console.log(`予測値設定: ${predictedQuantity.textContent} → ${predictedValue}`);
+            }
+        }
     });
 }
 
@@ -262,9 +284,9 @@ function suggestQuantities() {
         const predictedCell = row.querySelector('.predicted-quantity');
         
         if (predictedCell) {
-            const predictedQuantity = parseInt(predictedCell.textContent);
+            const predictedQuantity = parseInt(predictedCell.textContent.replace(/[^\d]/g, ''));
             
-            // 予測値の110%を推奨値として設定
+            // 予測値の110%を推奨値として計算（表示用）
             const suggestedQuantity = Math.ceil(predictedQuantity * 1.1);
             
             // プレースホルダーに推奨値を表示
@@ -273,13 +295,15 @@ function suggestQuantities() {
             // ダブルクリックで推奨値を自動入力
             input.addEventListener('dblclick', function() {
                 this.value = suggestedQuantity;
-                this.style.backgroundColor = '#e3f2fd';
+                this.style.backgroundColor = '#fff3e0';
                 
                 setTimeout(() => {
                     this.style.backgroundColor = '';
                 }, 1000);
                 
-                Message.showInfo(`推奨値 ${suggestedQuantity}本 を入力しました`);
+                if (typeof Message !== 'undefined') {
+                    Message.showInfo(`推奨値 ${suggestedQuantity}本 を入力しました`);
+                }
             });
         }
     });
@@ -305,7 +329,11 @@ function setupKeyboardShortcuts() {
 
 // 追加の初期化
 document.addEventListener('DOMContentLoaded', function() {
-    visualizePredictionData();
-    suggestQuantities();
+    // ページロード時に既存の予測データがあれば処理
+    setTimeout(() => {
+        visualizePredictionData();
+        suggestQuantities();
+    }, 100);
+    
     setupKeyboardShortcuts();
 });
