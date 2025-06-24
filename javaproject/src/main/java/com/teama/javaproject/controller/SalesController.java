@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class SalesController {
     public String registerSales(
             @RequestParam("salesDate") String salesDate,
             @RequestParam("createBy") Integer createBy,
-            @RequestParam("salesId") Integer salesId,
+            @RequestParam(value = "salesId", required = false) Integer salesId,
             @RequestParam("product_1") Integer product1,
             @RequestParam("product_2") Integer product2,
             @RequestParam("product_3") Integer product3,
@@ -48,7 +49,21 @@ public class SalesController {
             System.out.println("=== 売上データ登録開始 ===");
             System.out.println("販売日: " + salesDate);
             System.out.println("登録者ID: " + createBy);
-            System.out.println("売上ID: " + salesId);
+
+            // 日付から sales_id を計算
+            LocalDate date = LocalDate.parse(salesDate);
+            LocalDate baseDate = LocalDate.of(2024, 4, 1);
+            long daysDiff = java.time.temporal.ChronoUnit.DAYS.between(baseDate, date);
+            int calculatedSalesId = Math.max(1, (int) daysDiff + 1);
+
+            // 既存データチェック
+            boolean dataExists = salesService.existsBySalesId(calculatedSalesId);
+
+            if (dataExists) {
+                // 既存データがある場合は確認メッセージ
+                redirectAttributes.addFlashAttribute("warningMessage", 
+                    salesDate + " の売上データは既に存在します。上書きされました。");
+            }
 
             // Map<Long, Integer>形式でプロダクト販売データを作成
             Map<Long, Integer> productSales = new HashMap<>();
@@ -60,7 +75,7 @@ public class SalesController {
             productSales.put(6L, product6);  // product_id = 6 (IPA)
 
             // 売上データを登録
-            salesService.registerSalesData(salesDate, salesId, productSales, createBy);
+            salesService.registerSalesData(salesDate, calculatedSalesId, productSales, createBy);
             
             redirectAttributes.addFlashAttribute("successMessage", 
                 "売上データが正常に登録されました！");
@@ -73,6 +88,33 @@ public class SalesController {
         }
 
         return "redirect:/sales";
+    }
+
+    /**
+     * 売上データ編集画面表示
+     */
+    @GetMapping("/edit")
+    public String showEditForm(@RequestParam("date") String date, Model model) {
+        try {
+            LocalDate targetDate = LocalDate.parse(date);
+            
+            // 既存の売上データを取得
+            List<Map<String, Object>> existingData = salesService.getSalesDataByDate(targetDate);
+            
+            if (existingData.isEmpty()) {
+                model.addAttribute("errorMessage", "指定された日付の売上データが見つかりません。");
+                return "redirect:/sales";
+            }
+
+            model.addAttribute("salesDate", date);
+            model.addAttribute("existingData", existingData);
+            
+            return "sales_edit";
+
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "売上データの取得に失敗しました。");
+            return "redirect:/sales";
+        }
     }
 
     /**
