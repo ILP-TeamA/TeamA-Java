@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="/css/sales-input.css">
 </head>
+
 <body>
     <div class="container">
         <div class="sales-container">
@@ -16,7 +17,7 @@
             <!-- メッセージ表示エリア -->
             <div th:if="${successMessage}" class="message message-success" th:text="${successMessage}"></div>
             <div th:if="${errorMessage}" class="message message-error" th:text="${errorMessage}"></div>
-            
+
             <!-- 入力フォーム -->
             <div class="input-form">
                 <h3>📅 売上データ入力</h3>
@@ -28,9 +29,9 @@
                             <label for="salesDate" class="form-label">販売日付:</label>
                             <input type="date" id="salesDate" name="salesDate" class="form-control" required>
                         </div>
-                        
+
                     </div>
-                    
+
                     <div class="products-grid" id="productsGrid">
                         <div class="product-card">
                             <div class="product-header">
@@ -39,7 +40,8 @@
                             </div>
                             <div class="input-group">
                                 <label for="product_1">売上本数:</label>
-                                <input type="number" id="product_1" name="product_1" data-price="900" min="0" max="999" value="0" class="quantity-input">
+                                <input type="number" id="product_1" name="product_1" data-price="900" min="0" max="999"
+                                    value="0" class="quantity-input">
                                 <span class="unit">本</span>
                             </div>
                             <div class="product-revenue" id="revenue_product_1">
@@ -54,7 +56,8 @@
                             </div>
                             <div class="input-group">
                                 <label for="product_2">売上本数:</label>
-                                <input type="number" id="product_2" name="product_2" data-price="800" min="0" max="999" value="0" class="quantity-input">
+                                <input type="number" id="product_2" name="product_2" data-price="800" min="0" max="999"
+                                    value="0" class="quantity-input">
                                 <span class="unit">本</span>
                             </div>
                             <div class="product-revenue" id="revenue_product_2">
@@ -69,7 +72,8 @@
                             </div>
                             <div class="input-group">
                                 <label for="product_3">売上本数:</label>
-                                <input type="number" id="product_3" name="product_3" data-price="1000" min="0" max="999" value="0" class="quantity-input">
+                                <input type="number" id="product_3" name="product_3" data-price="1000" min="0" max="999"
+                                    value="0" class="quantity-input">
                                 <span class="unit">本</span>
                             </div>
                             <div class="product-revenue" id="revenue_product_3">
@@ -84,7 +88,8 @@
                             </div>
                             <div class="input-group">
                                 <label for="product_4">売上本数:</label>
-                                <input type="number" id="product_4" name="product_4" data-price="1000" min="0" max="999" value="0" class="quantity-input">
+                                <input type="number" id="product_4" name="product_4" data-price="1000" min="0" max="999"
+                                    value="0" class="quantity-input">
                                 <span class="unit">本</span>
                             </div>
                             <div class="product-revenue" id="revenue_product_4">
@@ -99,7 +104,8 @@
                             </div>
                             <div class="input-group">
                                 <label for="product_5">売上本数:</label>
-                                <input type="number" id="product_5" name="product_5" data-price="1200" min="0" max="999" value="0" class="quantity-input">
+                                <input type="number" id="product_5" name="product_5" data-price="1200" min="0" max="999"
+                                    value="0" class="quantity-input">
                                 <span class="unit">本</span>
                             </div>
                             <div class="product-revenue" id="revenue_product_5">
@@ -114,7 +120,8 @@
                             </div>
                             <div class="input-group">
                                 <label for="product_6">売上本数:</label>
-                                <input type="number" id="product_6" name="product_6" data-price="900" min="0" max="999" value="0" class="quantity-input">
+                                <input type="number" id="product_6" name="product_6" data-price="900" min="0" max="999"
+                                    value="0" class="quantity-input">
                                 <span class="unit">本</span>
                             </div>
                             <div class="product-revenue" id="revenue_product_6">
@@ -122,23 +129,28 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="total-revenue-preview" id="totalRevenuePreview">
                         本日の予想売上総額: ¥0
                     </div>
-                    
+
                     <button type="submit" class="submit-button">売上データを登録</button>
                 </form>
             </div>
-            
-            <!-- 売上履歴ページへのリンクボタン -->
+
+            <!-- ナビゲーションボタン -->
             <div class="link-buttons">
+                <a href="/home" class="link-button home">ホームメニューへ</a>
+                <form method="post" action="/logout" style="display: inline;">
+                    <button type="submit" class="link-button logout">ログアウト</button>
+                </form>
                 <a href="/sales/history" class="link-button history">売上履歴一覧へ</a>
             </div>
         </div>
     </div>
-    
+
     <script src="/js/common.js"></script>
     <script src="/js/sales-input.js"></script>
 </body>
+
 </html>
